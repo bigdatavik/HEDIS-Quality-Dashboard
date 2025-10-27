@@ -1,0 +1,27 @@
+# dashboard/app.yaml
+# IMPORTANT: Keep command simple - Databricks handles port/server config automatically
+command: ['streamlit', 'run', 'hedis_quality_dashboard.py']
+
+env:
+  # SQL Warehouse Configuration
+  - name: 'DATABRICKS_WAREHOUSE_ID'
+    value: '148ccb90800933a1'
+  
+  # Unity Catalog Configuration
+  - name: 'CATALOG_NAME'
+    value: 'humana_quality'
+  - name: 'SCHEMA_NAME'
+    value: 'hedis_gold'
+  
+  # MCP Configuration (Natural Language Search)
+  - name: 'GENIE_SPACE_ID'
+    value: '01f0b223e0e31cb0b4b093ef8578bcf8'
+  - name: 'KNOWLEDGE_ASSISTANT_ENDPOINT_ID'
+    value: 'ka-0bbaf97e-endpoint'
+  - name: 'AI_MODEL_NAME'
+    value: 'databricks-meta-llama-3-1-8b-instruct'
+  
+  # Streamlit Configuration
+  - name: 'STREAMLIT_GATHER_USAGE_STATS'
+    value: 'false'
+
