@@ -3504,9 +3504,27 @@ print("\n✅ All MCP components validated!")
 
 ### 11. **Reference Implementation Location** 📁
 
-**The proven working code is in this public GitHub repository:**
+**The proven working code is available in two locations:**
 
+#### **Primary: GitHub Repository**
 🔗 **https://github.com/bigdatavik/HEDIS-Quality-Dashboard.git**
+
+#### **Fallback: Local Workspace**
+📁 **`/Users/vik.malhotra/HEDIS-Quality-Dashboard/`**
+
+---
+
+### 🔄 Access Rule (CRITICAL):
+
+**If GitHub repo is not publicly accessible:**
+1. ⚠️ Attempt to reference GitHub URLs first
+2. ✅ If access fails → **Switch to local workspace path automatically**
+3. ✅ Read files directly from `/Users/vik.malhotra/HEDIS-Quality-Dashboard/`
+4. ✅ All patterns and code still accessible
+
+**This ensures reference code is ALWAYS available, regardless of repo visibility!**
+
+---
 
 **This repository contains the complete working HEDIS Quality Dashboard with MCP integration:**
 
@@ -3569,21 +3587,31 @@ print("\n✅ All MCP components validated!")
 
 ### 📋 Quick Access Links:
 
-**Main Branch (Stable):**
-- Browse code: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/tree/main
-- Dashboard folder: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/tree/main/dashboard
-- Notebooks: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/tree/main/notebooks
-- Knowledge docs: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/tree/main/data
+**GitHub (if public) OR Local Workspace (always available):**
 
-**Key Files (Direct Links):**
-- Complete app: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/hedis_quality_dashboard.py
-- MCP Agent: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/hedis_agent.py
-- Genie Client: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/mcp_genie_client.py
-- UC Functions Client: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/mcp_uc_functions_client.py
-- Knowledge Assistant: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/mcp_knowledge_assistant_client.py
-- Config: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/config.py
-- App YAML: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/app.yaml
-- UC Functions notebook: https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/notebooks/04_create_uc_functions.py
+| Component | GitHub URL | Local Path |
+|-----------|-----------|------------|
+| **Dashboard Folder** | [tree/main/dashboard](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/tree/main/dashboard) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/dashboard/` |
+| **Notebooks** | [tree/main/notebooks](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/tree/main/notebooks) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/notebooks/` |
+| **Knowledge Docs** | [tree/main/data](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/tree/main/data) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/data/` |
+
+**Key Files (GitHub OR Local):**
+
+| File | GitHub | Local |
+|------|--------|-------|
+| **Complete App** | [hedis_quality_dashboard.py](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/hedis_quality_dashboard.py) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/dashboard/hedis_quality_dashboard.py` |
+| **MCP Agent** | [hedis_agent.py](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/hedis_agent.py) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/dashboard/hedis_agent.py` |
+| **Genie Client** | [mcp_genie_client.py](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/mcp_genie_client.py) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/dashboard/mcp_genie_client.py` |
+| **UC Functions Client** | [mcp_uc_functions_client.py](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/mcp_uc_functions_client.py) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/dashboard/mcp_uc_functions_client.py` |
+| **Knowledge Assistant** | [mcp_knowledge_assistant_client.py](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/mcp_knowledge_assistant_client.py) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/dashboard/mcp_knowledge_assistant_client.py` |
+| **Config** | [config.py](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/config.py) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/dashboard/config.py` |
+| **App YAML** | [app.yaml](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/dashboard/app.yaml) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/dashboard/app.yaml` |
+| **UC Functions Notebook** | [04_create_uc_functions.py](https://github.com/bigdatavik/HEDIS-Quality-Dashboard/blob/main/notebooks/04_create_uc_functions.py) | `/Users/vik.malhotra/HEDIS-Quality-Dashboard/notebooks/04_create_uc_functions.py` |
+
+**Access Strategy:**
+1. Try GitHub URL first (works if repo is public)
+2. If GitHub access fails → Use local path (always works)
+3. Result: Reference code ALWAYS accessible ✅
 
 **Clone for new project:**
 ```bash
