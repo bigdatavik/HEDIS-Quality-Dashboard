@@ -288,40 +288,6 @@ Anywhere you have analysts as bottlenecks between business users and data—**th
 
 ---
 
-## The Sales Insight (For My Databricks Colleagues)
-
-Since I work at Databricks, here's the enterprise sales angle:
-
-### Why This Wins Deals
-
-**1. ROI is Obvious and Fast**
-- $11.6M value in Year 1 for a mid-sized payor
-- Platform cost: Already in consumption commitment
-- Payback period: **Immediate**
-
-**2. Competitive Differentiation**
-- Traditional cloud data warehouses: Limited to BI, not AI-native
-- Multi-cloud platforms: Fragmented (4-5 services to integrate)
-- **Databricks: One platform, unified governance for data + AI**
-
-**3. Fast POC = Fast Close**
-- 2 weeks to production-ready app
-- Customer sees value immediately
-- No 6-month implementation risk
-
-**4. Land and Expand**
-- Starts with one use case (HEDIS)
-- Expands to prior authorization, claims, member 360
-- Each expansion drives more consumption
-
-### The Pitch
-
-> *"We built a production-ready AI analytics platform for a quality team in 2 weeks. Natural language queries, custom business logic, document search—all governed through Unity Catalog. Traditional approach: 6 vendors, 6 months, $480K. Databricks: One platform, 2 weeks, included in your commitment. That's not a feature advantage. That's a business model advantage."*
-
-**Then show them the HEDIS dashboard as proof.**
-
----
-
 ## How to Build This Yourself
 
 Want to replicate this for your organization? Here's the blueprint:
@@ -382,7 +348,7 @@ And it's only possible when you have:
 
 ---
 
-## Your Turn
+## Let's Connect
 
 If you're a quality leader, data executive, or CIO asking:
 
@@ -390,12 +356,11 @@ If you're a quality leader, data executive, or CIO asking:
 
 The answer is simpler than you think. And faster than you expect.
 
-**Want to see this in action?** Reach out for a demo:
+**I'd love to hear your thoughts** or discuss how this pattern might apply to your use case:
 - **LinkedIn:** [linkedin.com/in/vikmalhotra](https://linkedin.com/in/vikmalhotra)
-- **Email:** vik.malhotra@databricks.com
 - **GitHub:** [github.com/bigdatavik](https://github.com/bigdatavik)
 
-**Want to build this yourself?** Clone the repo and start customizing:
+**Want to explore the code?** The entire project is open and ready to customize:
 - **Repo:** [github.com/bigdatavik/HEDIS-Quality-Dashboard](https://github.com/bigdatavik/HEDIS-Quality-Dashboard)
 - **Docs:** See `MY_ENVIRONMENT.md` for complete setup guide
 
@@ -409,15 +374,15 @@ Your team can too.
 
 The technology is ready. The platform is proven. The ROI is measurable.
 
-**The only question is: When do you start?**
+**What will your team build?**
 
 ---
 
 ### About the Author
 
-**Vik Malhotra** is a Solutions Architect at Databricks, specializing in healthcare analytics and AI-powered data platforms. He helps organizations transform their data teams from reactive report factories to proactive strategic advisors. Previously, he built analytics platforms for Fortune 500 healthcare payors and has deep expertise in HEDIS quality measures, claims analytics, and regulatory compliance.
+**Vik Malhotra** is a Solutions Architect at Databricks, specializing in healthcare analytics and AI-powered data platforms. He partners with organizations to transform their data teams from reactive report factories to proactive strategic advisors. Previously, he built analytics platforms for Fortune 500 healthcare payors and has deep expertise in HEDIS quality measures, claims analytics, and regulatory compliance.
 
-*Connect on LinkedIn or check out his GitHub for more healthcare AI projects.*
+*I share open-source projects and write about data engineering, AI platforms, and healthcare analytics. Connect on LinkedIn or explore my GitHub projects.*
 
 ---
 
