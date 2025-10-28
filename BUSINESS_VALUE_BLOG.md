@@ -62,17 +62,17 @@ Sarah's team wasn't lazy. They were brilliant healthcare analysts trapped in a s
 Sarah's IT director had a proposal. The standard playbook for modern healthcare analytics:
 
 **The Multi-Vendor Stack:**
-- Snowflake data warehouse: $180K/year
-- Tableau for dashboards: $120K/year  
-- Pinecone vector database for document search: $60K/year
-- OpenAI API for natural language: $30K/year
-- AWS Lambda for app hosting: $40K/year
-- Airflow for orchestration: $50K/year
+- Cloud data warehouse: $180K/year
+- BI visualization platform: $120K/year  
+- Vector database for document search: $60K/year
+- Third-party LLM API for natural language: $30K/year
+- Serverless app hosting: $40K/year
+- External orchestration platform: $50K/year
 
 **Total price tag: $480K/year**  
 **Implementation time: 6 months**  
 **Vendors to integrate: 6**  
-**New skills required: Kubernetes, vector databases, LLM prompt engineering**
+**New skills required: Container orchestration, vector databases, LLM prompt engineering**
 
 Sarah looked at the proposal and shook her head.
 
@@ -177,7 +177,7 @@ The team built a **Streamlit dashboard** with tabs for:
 - Member lookup
 - **MCP Search** (natural language queries to Genie + Knowledge Assistant)
 
-They deployed it using **Databricks Apps**—the managed app hosting platform. No AWS. No Docker. No DevOps complexity.
+They deployed it using **Databricks Apps**—the managed app hosting platform. No external cloud services. No container management. No DevOps complexity.
 
 **Command to deploy:**
 ```bash
@@ -240,24 +240,24 @@ But the numbers only tell part of the story.
 
 ---
 
-## Why This Couldn't Be Done on Snowflake or Azure
+## Why This Couldn't Be Done on Traditional Platforms
 
-I know what you're thinking: *"Can't we do this with Snowflake Cortex and Azure OpenAI?"*
+I know what you're thinking: *"Can't we do this with other modern data platforms and AI services?"*
 
 Short answer: **No, not like this.**
 
 ### The Comparison
 
-| Feature | Databricks MCP | Snowflake Cortex | Azure Fabric + OpenAI |
+| Feature | Databricks MCP | Traditional Cloud Data Warehouse | Cloud Platform + Third-Party LLM |
 |---------|----------------|------------------|----------------------|
-| Natural language → SQL | ✅ Genie (built-in) | ✅ Copilot | ❌ Requires custom dev |
-| Custom AI tools (business logic) | ✅ **UC Functions (native)** | ❌ Need external orchestration | ❌ Azure Functions + API Management |
-| RAG over documents | ✅ Knowledge Assistant | ✅ Document AI (preview) | ⚠️ Azure AI Search (separate service) |
-| Unified governance | ✅ Unity Catalog for all | ⚠️ Partial | ❌ Multiple services |
-| One platform | ✅ | ❌ (no data engineering) | ❌ (fragmented) |
-| Data stays in environment | ✅ | ✅ | ⚠️ OpenAI API = data egress |
+| Natural language → SQL | ✅ Genie (built-in) | ⚠️ Limited or add-on | ❌ Requires custom development |
+| Custom AI tools (business logic) | ✅ **UC Functions (native)** | ❌ Need external orchestration | ❌ Requires serverless functions + API layer |
+| RAG over documents | ✅ Knowledge Assistant | ⚠️ Preview or external service | ⚠️ Separate vector database required |
+| Unified governance | ✅ Unity Catalog for all | ⚠️ Data only, not AI | ❌ Must govern multiple services |
+| One platform | ✅ Data + AI + Apps | ❌ Data warehouse only | ❌ Fragmented architecture |
+| Data stays in environment | ✅ All processing internal | ✅ Data warehouse yes | ⚠️ LLM API calls = potential data egress |
 
-**The key differentiator:** Only Databricks has **UC Functions**—the ability to expose custom Python business logic as AI-callable tools, governed by Unity Catalog.
+**The key differentiator:** Databricks has **UC Functions**—the ability to expose custom Python business logic as AI-callable tools, governed by Unity Catalog.
 
 This means the AI doesn't just query your data. **It thinks like your analysts**, using your organization's specific calculations, rules, and domain expertise.
 
@@ -300,9 +300,9 @@ Since I work at Databricks, here's the enterprise sales angle:
 - Payback period: **Immediate**
 
 **2. Competitive Differentiation**
-- Snowflake: Can't do UC Functions (custom tools)
-- Azure/AWS: Fragmented (4-5 services to integrate)
-- **Databricks: One platform, unified governance**
+- Traditional cloud data warehouses: Limited to BI, not AI-native
+- Multi-cloud platforms: Fragmented (4-5 services to integrate)
+- **Databricks: One platform, unified governance for data + AI**
 
 **3. Fast POC = Fast Close**
 - 2 weeks to production-ready app
