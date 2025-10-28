@@ -3,6 +3,10 @@
 command: ['streamlit', 'run', 'hedis_quality_dashboard.py']
 
 env:
+  # Databricks Configuration
+  - name: 'DATABRICKS_HOST'
+    value: 'adb-984752964297111.11.azuredatabricks.net'
+  
   # SQL Warehouse Configuration
   - name: 'DATABRICKS_WAREHOUSE_ID'
     value: '148ccb90800933a1'

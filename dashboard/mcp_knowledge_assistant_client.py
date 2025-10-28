@@ -139,11 +139,11 @@ def create_knowledge_assistant_tool_for_langchain(knowledge_client: KnowledgeAss
         LangChain tool for Knowledge Assistant queries
     """
     class KnowledgeAssistantMCPTool(BaseTool):
-        name: str = "knowledge_assistant_query"
-        description: str = """Search and retrieve information from the HEDIS knowledge base.
+        name: str = Field(default="knowledge_assistant_query")
+        description: str = Field(default="""Search and retrieve information from the HEDIS knowledge base.
         Use this tool to answer questions about HEDIS compliance requirements, NCQA guidelines, 
         gap closure protocols, and quality improvement processes.
-        It provides answers with citations from the relevant knowledge documents."""
+        It provides answers with citations from the relevant knowledge documents.""")
         args_schema: type[BaseModel] = KnowledgeAssistantQueryInput
         
         def _run(self, query: str) -> str:

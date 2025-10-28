@@ -36,20 +36,16 @@ MCP_ENABLED = GENIE_SPACE_ID is not None
 # Databricks SQL connection
 @st.cache_resource
 def get_databricks_connection():
-    """Create Databricks SQL connection using SQL Connector"""
+    """Create Databricks SQL connection using official Databricks pattern"""
     try:
         from databricks import sql
         from databricks.sdk.core import Config
         
-        cfg = Config()  # Reads from ~/.databrickscfg DEFAULT profile
-        
-        # Clean up host URL - remove protocol if present
-        host = cfg.host
-        if host.startswith("https://"):
-            host = host.replace("https://", "")
+        # Config() reads from DATABRICKS_HOST env var (set in app.yaml for Databricks Apps)
+        cfg = Config()
         
         return sql.connect(
-            server_hostname=host,
+            server_hostname=cfg.host,
             http_path=f"/sql/1.0/warehouses/{SQL_WAREHOUSE_ID}",
             credentials_provider=lambda: cfg.authenticate,
         )

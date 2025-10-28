@@ -147,18 +147,19 @@ def create_uc_functions_tools_for_langchain(uc_functions_client: UCFunctionsMCPC
             # No parameters - use empty model
             DynamicInputModel = create_model(f"{func_name.replace('-', '_').capitalize()}Input")
         
+        # Create tool class with Field defaults for Pydantic v2 compatibility
         class UCFuncTool(BaseTool):
-            name: str = func_name
-            description: str = func_description
+            name: str = Field(default=func_name)
+            description: str = Field(default=func_description)
             args_schema: type[BaseModel] = DynamicInputModel
             
             def _run(self, **kwargs) -> str:
                 """Execute the UC Function through MCP server"""
-                result = uc_functions_client.call_uc_function(self.name, **kwargs)
+                result = uc_functions_client.call_uc_function(func_name, **kwargs)
                 if result["success"]:
-                    return f"UC Function '{self.name}' Result:\n{result['result']}"
+                    return f"UC Function '{func_name}' Result:\n{result['result']}"
                 else:
-                    return f"Error calling UC Function '{self.name}': {result['error']}"
+                    return f"Error calling UC Function '{func_name}': {result['error']}"
         
         tools.append(UCFuncTool())
     

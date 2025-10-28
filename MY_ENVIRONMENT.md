@@ -31,7 +31,7 @@ Cleanup: 3 options - Databricks only, Local only, or Both
 
 When you give me a prompt, I will:
 1. ✅ Build all notebooks and source code
-2. ✅ Create Streamlit dashboard with `app.yaml` for Databricks Apps
+2. ✅ Create Streamlit dashboard with `app.yaml` for Databricks Apps **using OFFICIAL authentication pattern**
 3. ✅ Add app configuration to `databricks.yml` for workspace deployment
 4. ✅ Deploy to Databricks via DAB (notebooks + jobs + apps)
 5. ✅ **RUN all jobs to create catalogs, schemas, and tables**
@@ -46,6 +46,29 @@ When you give me a prompt, I will:
 14. ⏸️ **YOU can test locally OR use the workspace URL I provide**
 
 **You don't need to do ANYTHING - I handle 100% end-to-end!**
+
+### 🔐 Dashboard Authentication Pattern (MANDATORY)
+
+**ALWAYS use this exact pattern - from [Official Databricks Documentation](https://docs.databricks.com/aws/en/dev-tools/databricks-apps/tutorial-streamlit):**
+
+```python
+from databricks.sdk.core import Config
+cfg = Config()  # Reads DATABRICKS_HOST from app.yaml
+sql.connect(
+    server_hostname=cfg.host,
+    http_path=f"/sql/1.0/warehouses/{SQL_WAREHOUSE_ID}",
+    credentials_provider=lambda: cfg.authenticate,
+)
+```
+
+**Required in app.yaml:**
+```yaml
+env:
+  - name: 'DATABRICKS_HOST'
+    value: 'adb-984752964297111.11.azuredatabricks.net'
+```
+
+**This is the ONLY pattern that works reliably in both local dev and Databricks Apps!**
 
 ## 📦 Standard Stack
 
@@ -485,34 +508,34 @@ dbutils.fs.put(f"/Volumes/{catalog}/{schema}/{volume}/{filename}", content, over
 
 ## 📊 Streamlit Dashboard Standards
 
-**ALWAYS use Databricks SQL Connector for local Streamlit apps:**
+**⚠️ CRITICAL: ALWAYS use this EXACT pattern - Official Databricks Documentation**
 
-### ✅ Correct Configuration (Local + Databricks Compatible)
+### ✅ CORRECT Configuration (OFFICIAL DATABRICKS PATTERN)
+
+**Reference:** [Databricks Apps Streamlit Tutorial](https://docs.databricks.com/aws/en/dev-tools/databricks-apps/tutorial-streamlit)
 
 ```python
-# ✅ CORRECT - Use SQL Connector with proper defaults for local testing
+# ✅ CORRECT - Official Databricks pattern for Streamlit apps
 from databricks import sql
 from databricks.sdk.core import Config
+import streamlit as st
 import os
 
 # Configuration from environment variables (with defaults for local testing)
-CATALOG = os.getenv("CATALOG_NAME", "humana_risk")
-SCHEMA = os.getenv("SCHEMA_NAME", "hcc_gold")
+CATALOG = os.getenv("CATALOG_NAME", "humana_quality")
+SCHEMA = os.getenv("SCHEMA_NAME", "hedis_gold")
 SQL_WAREHOUSE_ID = os.getenv("DATABRICKS_WAREHOUSE_ID", "148ccb90800933a1")
 
 @st.cache_resource
 def get_databricks_connection():
-    """Create Databricks SQL connection using SQL Connector"""
+    """Create Databricks SQL connection using official Databricks pattern"""
     try:
-        cfg = Config()  # Reads from ~/.databrickscfg DEFAULT profile
-        
-        # Clean up host URL - remove protocol if present
-        host = cfg.host
-        if host.startswith("https://"):
-            host = host.replace("https://", "")
+        # Config() reads from DATABRICKS_HOST env var (set in app.yaml for Databricks Apps)
+        # For local: reads from ~/.databrickscfg DEFAULT profile
+        cfg = Config()
         
         return sql.connect(
-            server_hostname=host,
+            server_hostname=cfg.host,
             http_path=f"/sql/1.0/warehouses/{SQL_WAREHOUSE_ID}",
             credentials_provider=lambda: cfg.authenticate,
         )
@@ -535,26 +558,39 @@ def read_table(table_name: str) -> pd.DataFrame:
         return pd.DataFrame()
 ```
 
-**⚠️ CRITICAL: Always provide defaults for local testing**
-- SQL_WAREHOUSE_ID must have a default value (not None)
-- Host URL must be cleaned (remove "https://" protocol)
-- All environment variables should have fallback defaults
+**⚠️ CRITICAL: Key Requirements**
+- ✅ Use `Config()` - it reads from `DATABRICKS_HOST` env var in Databricks Apps
+- ✅ Use `cfg.host` directly (no need to strip "https://")
+- ✅ Use `credentials_provider=lambda: cfg.authenticate` (exact pattern from docs)
+- ✅ SQL_WAREHOUSE_ID must have a default value (not None)
+- ✅ All environment variables should have fallback defaults
+
+**❌ WRONG Patterns - DO NOT USE:**
 
 ```python
+# ❌ WRONG - Don't use WorkspaceClient
+from databricks.sdk import WorkspaceClient
+w = WorkspaceClient()  # NO!
+
+# ❌ WRONG - Don't manually strip protocol
+host = cfg.host.replace("https://", "")  # NO! Use cfg.host directly
+
+# ❌ WRONG - Don't use w.config.authenticate
+credentials_provider=w.config.authenticate  # NO! Use cfg.authenticate
+
 # ❌ WRONG - Don't use Databricks Connect for dashboards
-# (Too heavyweight, requires cluster, slow)
 from databricks.connect import DatabricksSession
 spark = DatabricksSession.builder...  # NO!
 ```
 
-**Why SQL Connector?**
+**Why This Pattern?**
+- ✅ Official Databricks documentation
+- ✅ Works in both local development and Databricks Apps
+- ✅ Automatic authentication (local: ~/.databrickscfg, app: service principal OAuth)
 - ✅ Lightweight - just SQL queries
 - ✅ Uses SQL Warehouse (faster, cheaper than cluster)
-- ✅ Recommended by Microsoft for Streamlit apps
-- ✅ Better for read-only dashboards
-- ✅ Automatic authentication from .databrickscfg
 
-**Reference:** https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-apps/tutorial-streamlit
+**Reference:** https://docs.databricks.com/aws/en/dev-tools/databricks-apps/tutorial-streamlit
 
 ---
 
@@ -607,20 +643,65 @@ SQL_WAREHOUSE_ID = os.getenv("DATABRICKS_WAREHOUSE_ID", "148ccb90800933a1")
 
 ### 🚨 If App Works Locally But Not in Databricks Apps
 
-**Problem:** Dashboard runs fine locally but returns DNS/connection errors when deployed to Databricks Apps
+**Problem:** Dashboard runs fine locally but returns "Connection error: Error during request to server" when deployed to Databricks Apps
 
-**Root Cause:** Old deployment has cached broken configuration (missing defaults or malformed URLs)
+**Root Causes & Solutions:**
 
-**Solution: Redeploy with Fixed Code**
+#### 1. Missing Catalog Permissions (MOST COMMON)
+
+The app service principal needs explicit permissions to access Unity Catalog:
 
 ```bash
-# Step 1: Ensure your dashboard has proper defaults (see above)
-# Step 2: Redeploy via bundle
+# Get app service principal ID
+databricks apps get your-app-name --profile DEFAULT | grep service_principal_client_id
+
+# Grant catalog permissions (replace with your service principal ID and catalog name)
+databricks grants update catalog your_catalog_name --json '{
+  "changes": [{
+    "principal": "your-service-principal-id",
+    "add": ["USE_CATALOG", "USE_SCHEMA", "SELECT"]
+  }]
+}' --profile DEFAULT
+
+# Restart app
+databricks apps stop your-app-name --profile DEFAULT
+databricks apps start your-app-name --profile DEFAULT
+```
+
+**This is REQUIRED after every new deployment!** The service principal doesn't inherit your user permissions.
+
+#### 2. Wrong Authentication Pattern
+
+Make sure you're using the **OFFICIAL Databricks pattern** (see Streamlit Dashboard Standards section above):
+
+```python
+# ✅ CORRECT
+from databricks.sdk.core import Config
+cfg = Config()
+sql.connect(
+    server_hostname=cfg.host,
+    http_path=f"/sql/1.0/warehouses/{SQL_WAREHOUSE_ID}",
+    credentials_provider=lambda: cfg.authenticate,
+)
+```
+
+#### 3. Missing DATABRICKS_HOST Environment Variable
+
+Ensure `app.yaml` includes:
+
+```yaml
+env:
+  - name: 'DATABRICKS_HOST'
+    value: 'adb-984752964297111.11.azuredatabricks.net'
+```
+
+**Redeploy if needed:**
+
+```bash
 cd /path/to/your/project
 databricks bundle deploy --profile DEFAULT
-
-# Step 3: Restart the app with fresh deployment
-databricks bundle run your_dashboard_app --profile DEFAULT
+databricks apps stop your-app-name --profile DEFAULT
+databricks apps start your-app-name --profile DEFAULT
 ```
 
 **Why This Happens:**
@@ -672,10 +753,14 @@ dashboard/
 ```yaml
 # dashboard/app.yaml
 # IMPORTANT: Keep command simple - Databricks handles port/server config automatically
-# Reference: https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-apps/app-runtime#example-appyaml-for-a-streamlit-app
+# Reference: https://docs.databricks.com/aws/en/dev-tools/databricks-apps/tutorial-streamlit
 command: ['streamlit', 'run', 'your_dashboard.py']
 
 env:
+  # Databricks Configuration (CRITICAL - needed for Config() to work in Databricks Apps)
+  - name: 'DATABRICKS_HOST'
+    value: 'adb-984752964297111.11.azuredatabricks.net'
+  
   # SQL Warehouse Configuration
   - name: 'DATABRICKS_WAREHOUSE_ID'
     value: '148ccb90800933a1'
@@ -1569,6 +1654,31 @@ w.catalogs.delete(name=catalog_name, force=True)
 
 MCP (Model Context Protocol) adds AI-powered search capabilities to your app using Databricks managed services. The infrastructure is already in place - you just need to configure it.
 
+### 📋 Quick Navigation - Complete MCP Documentation
+
+This comprehensive guide contains EVERYTHING you need for MCP:
+
+1. **📚 Knowledge Documents** (scroll down ~50 lines)
+   - 4 complete content templates (agent guide, source descriptions, policies, FAQ)
+   - Save locally in `data/` folder before uploading to volumes
+   - Project-specific examples for HEDIS, HCC, Pharmacy
+
+2. **🎯 Knowledge Assistant Setup** (scroll down ~600 lines)
+   - Step-by-step UI instructions
+   - Description field templates for each project type
+   - "Describe the content" field templates (CRITICAL!)
+
+3. **🎨 Genie Space Setup** (scroll down ~650 lines)
+   - Instructions tab templates (CRITICAL!)
+   - SQL Expressions examples
+   - How to get Genie Space ID
+
+4. **🔧 Complete MCP Code Templates** (scroll to MCP Implementation Pattern section)
+   - `config.py` - Complete configuration
+   - `mcp_genie_client.py` - Full client code
+   - `mcp_uc_functions_client.py` - Full client code
+   - `mcp_knowledge_assistant_client.py` - Full client code
+
 ### Prerequisites (Already Done Automatically)
 
 ✅ **UC Functions created**: Project-specific functions (e.g., `lookup_member`, `lookup_claims`, `lookup_providers`)  
@@ -1582,36 +1692,775 @@ MCP (Model Context Protocol) adds AI-powered search capabilities to your app usi
 - **Required**: Genie Space + UC Functions (core MCP functionality)
 - **Optional**: Knowledge Assistant (document search - only if endpoint available)
 
-### Step 1: Create Genie Space (5 minutes)
+---
+
+## 📋 Knowledge Documents - Content Templates & Best Practices
+
+**CRITICAL: Always save knowledge documents locally in `data/` folder BEFORE uploading to volumes!**
+
+### File Structure:
+```
+your-project/
+├── data/                                    # ⭐ LOCAL knowledge documents
+│   ├── agent_knowledge_source_guide.txt    # What data sources are available
+│   ├── knowledge_source_descriptions.txt   # How to use each data source
+│   ├── domain_policies.txt                 # Domain-specific policies/rules
+│   └── faq_documentation.txt               # Common questions and answers
+```
+
+**Why save locally first:**
+- ✅ Version control with git
+- ✅ Easy to update and redeploy
+- ✅ Can be embedded in notebook `05_upload_knowledge_docs.py`
+- ✅ Portable across environments
+
+---
+
+### Template 1: Agent Knowledge Source Guide
+
+**File:** `data/agent_knowledge_source_guide.txt`
+
+**Purpose:** Tells the AI agent what data sources and tools are available
+
+**Template (HEDIS Quality Example):**
+```
+HEDIS Quality Measures Agent - Knowledge Source Guide
+
+=== AVAILABLE DATA SOURCES ===
+
+1. GENIE SPACE (Natural Language SQL)
+   - Purpose: Query structured data tables using natural language
+   - Use when: User asks about aggregate data, trends, or statistics
+   - Example queries:
+     * "What is the average quality score?"
+     * "Show me compliance rates by measure"
+     * "How many members closed gaps this year?"
+
+2. UC FUNCTIONS (Structured Lookups)
+   - Purpose: Precise lookups for specific members, measures, or gaps
+   - Available functions:
+     * lookup_member(member_id) - Get member demographics and quality status
+     * lookup_member_measures(member_id) - Get all quality measures for a member
+     * lookup_member_gaps(member_id) - Get open gaps in care for a member
+     * members_with_gap(measure_code) - Find all members with specific gap
+     * lookup_measure_performance(measure_code) - Get overall measure performance
+     * members_at_risk(measure_code) - Find members at risk for a measure
+   - Use when: User asks about specific member ID or measure code
+
+3. KNOWLEDGE ASSISTANT (Document Search)
+   - Purpose: Answer questions about policies, guidelines, and definitions
+   - Use when: User asks "what is", "how to", or "explain"
+   - Topics covered:
+     * HEDIS measure definitions and specifications
+     * NCQA compliance requirements
+     * Gap closure procedures
+     * Quality improvement guidelines
+
+=== DECISION TREE ===
+
+If user asks about a SPECIFIC MEMBER (e.g., "Show me M000001's gaps"):
+  → Use UC Functions (lookup_member, lookup_member_gaps)
+
+If user asks AGGREGATE questions (e.g., "What's our average score?"):
+  → Use Genie Space
+
+If user asks DEFINITION questions (e.g., "What is BCS?"):
+  → Use Knowledge Assistant
+
+If user asks WHO HAS questions (e.g., "Which members have BCS gaps?"):
+  → Use UC Functions (members_with_gap)
+
+=== BEST PRACTICES ===
+
+1. Always use member_id for member lookups (format: M000001, M000002, etc.)
+2. Use standard HEDIS measure codes (BCS, CDC, CBP, etc.)
+3. When data is not found, suggest alternative queries
+4. Combine multiple tools for complex questions
+5. Always cite the data source in your response
+```
+
+**Template (Risk Adjustment/HCC Example):**
+```
+HCC Risk Adjustment Agent - Knowledge Source Guide
+
+=== AVAILABLE DATA SOURCES ===
+
+1. GENIE SPACE (Natural Language SQL)
+   - Purpose: Query member RAF scores, HCC distribution, revenue data
+   - Use when: User asks about aggregate analytics
+   - Example queries:
+     * "What is our average RAF score?"
+     * "Show me revenue opportunity by HCC category"
+     * "How many members have RAF > 2.0?"
+
+2. UC FUNCTIONS (Structured Lookups)
+   - Available functions:
+     * lookup_member(member_id) - Member demographics and RAF
+     * lookup_hcc_codes(member_id) - All HCC codes for a member
+     * lookup_raf_scores(member_id) - RAF score breakdown
+     * lookup_diagnoses(member_id) - Diagnosis history
+     * members_with_hcc(hcc_code) - Members with specific HCC
+     * get_member_revenue_opportunity(member_id) - Revenue gap calculation
+   - Use when: User asks about specific member or HCC code
+
+3. KNOWLEDGE ASSISTANT (Document Search)
+   - Topics covered:
+     * CMS-HCC V28 model documentation
+     * HCC coding guidelines and rules
+     * RAF score calculation methodology
+     * Revenue optimization strategies
+
+=== DECISION TREE ===
+
+If user asks about SPECIFIC MEMBER:
+  → Use lookup_member or lookup_hcc_codes
+
+If user asks about SPECIFIC HCC CODE (e.g., "Who has HCC 85?"):
+  → Use members_with_hcc
+
+If user asks REVENUE questions:
+  → Use Genie Space for aggregates, or get_member_revenue_opportunity for specific member
+
+If user asks CODING RULES (e.g., "What qualifies for HCC 19?"):
+  → Use Knowledge Assistant
+```
+
+---
+
+### Template 2: Knowledge Source Descriptions
+
+**File:** `data/knowledge_source_descriptions.txt`
+
+**Purpose:** Detailed descriptions of each data source for the agent
+
+**Template:**
+```
+DATA SOURCE DESCRIPTIONS - HEDIS Quality Measures
+
+=== GENIE SPACE ===
+The Genie Space provides natural language access to structured HEDIS quality data tables:
+
+Tables available:
+- quality_summary: Overall quality performance metrics
+- measure_performance: Performance by individual HEDIS measure
+- member_measures: Member-level measure compliance
+- gap_closure_tracking: Gap in care status and closure dates
+
+The Genie Space should be used for:
+- Aggregate statistics and trends
+- Cross-measure analysis
+- Time-series queries
+- Cohort identification
+
+Example use cases:
+- "What percentage of members closed BCS gaps in Q4?"
+- "Compare CDC performance across age groups"
+- "Show me top 10 measures by gap count"
+
+=== UC FUNCTIONS ===
+Unity Catalog Functions provide fast, indexed lookups:
+
+lookup_member(member_id STRING)
+  Returns: Member demographics, enrollment, current quality status
+  Use when: Need basic member information
+  Example: lookup_member('M000001')
+
+lookup_member_measures(member_id STRING)
+  Returns: All HEDIS measures applicable to member with compliance status
+  Use when: Need complete quality profile for a member
+  Example: lookup_member_measures('M000001')
+
+lookup_member_gaps(member_id STRING)
+  Returns: All open gaps in care with recommended actions
+  Use when: Care management needs gap closure list
+  Example: lookup_member_gaps('M000001')
+
+members_with_gap(measure_code STRING)
+  Returns: All members with open gap for specific measure
+  Use when: Need to identify outreach cohort
+  Example: members_with_gap('BCS')
+
+lookup_measure_performance(measure_code STRING)
+  Returns: Overall performance statistics for a measure
+  Use when: Need measure-level summary
+  Example: lookup_measure_performance('CDC')
+
+members_at_risk(measure_code STRING)
+  Returns: Members at risk of missing measure requirements
+  Use when: Proactive outreach planning
+  Example: members_at_risk('CBP')
+
+=== KNOWLEDGE ASSISTANT ===
+Document search covering HEDIS specifications and policies:
+
+Documents indexed:
+1. HEDIS measure specifications (technical definitions)
+2. NCQA compliance requirements (regulatory requirements)
+3. Gap closure procedures (operational guidelines)
+4. Quality improvement protocols (best practices)
+
+The Knowledge Assistant should be used for:
+- "What is" questions (definitions)
+- "How to" questions (procedures)
+- Policy interpretation
+- Regulatory compliance questions
+
+Example use cases:
+- "What are the exclusion criteria for BCS?"
+- "How do I document gap closure?"
+- "What is the NCQA requirement for CDC testing frequency?"
+```
+
+---
+
+### Template 3: Domain-Specific Policies
+
+**File:** `data/domain_policies.txt`
+
+**Purpose:** Business rules, policies, and domain knowledge
+
+**Template (HEDIS Quality):**
+```
+HEDIS QUALITY MEASURES - POLICIES AND GUIDELINES
+
+=== MEASURE DEFINITIONS ===
+
+BCS (Breast Cancer Screening)
+- Target Population: Women ages 50-74
+- Requirement: Mammogram within 27 months
+- Compliance Rate: Goal ≥ 75%
+- Gap Closure Window: Must complete by 12/31 for current year credit
+- Exclusions: Bilateral mastectomy, advanced illness
+
+CDC (Comprehensive Diabetes Care)
+- Target Population: Members ages 18-75 with Type 1 or Type 2 diabetes
+- Requirements:
+  * HbA1c test (at least one per year)
+  * Eye exam (retinal) within 24 months
+  * Medical attention for nephropathy
+- Compliance Rate: Goal ≥ 80% for HbA1c testing
+- Exclusions: Advanced illness, palliative care
+
+CBP (Controlling High Blood Pressure)
+- Target Population: Adults ages 18-85 with hypertension diagnosis
+- Requirement: BP < 140/90 at most recent reading
+- Compliance Rate: Goal ≥ 70%
+- Gap Closure: Requires in-person visit with BP measurement
+
+=== GAP CLOSURE PROCEDURES ===
+
+Step 1: Identify Open Gaps
+- Run members_with_gap('MEASURE_CODE') to get list
+- Prioritize by: Risk score, past engagement, measure weight
+
+Step 2: Member Outreach
+- Phone call or letter with measure explanation
+- Schedule appointment if needed
+- Provide educational materials
+
+Step 3: Service Delivery
+- Complete required screening/test
+- Document in medical record with CPT code
+- Ensure claims submission within 30 days
+
+Step 4: Verification
+- Confirm claim received and processed
+- Update gap status in tracking system
+- Calculate updated compliance rate
+
+=== NCQA COMPLIANCE REQUIREMENTS ===
+
+Documentation Standards:
+- All services must have valid CPT/HCPCS codes
+- Date of service must be within measurement year
+- Provider must be in network (or authorized out-of-network)
+- Medical records must be available for audit
+
+Reporting Timeline:
+- Data collection period: January 1 - December 31
+- Supplemental data deadline: March 31
+- Final submission: June 30
+- NCQA audit: August - October
+
+Quality Thresholds (5-Star Rating):
+- 5 Stars: ≥ 90% compliance
+- 4 Stars: 80-89% compliance
+- 3 Stars: 70-79% compliance
+- 2 Stars: 60-69% compliance
+- 1 Star: < 60% compliance
+
+=== MEASURE WEIGHTS (STAR RATING) ===
+
+High Impact (3x weight):
+- CDC (Comprehensive Diabetes Care)
+- CBP (Controlling Blood Pressure)
+- COL (Colorectal Cancer Screening)
+
+Medium Impact (2x weight):
+- BCS (Breast Cancer Screening)
+- OMW (Osteoporosis Management in Women)
+
+Standard Impact (1x weight):
+- All other HEDIS measures
+
+=== REVENUE IMPACT ===
+
+Star Rating Impact on Revenue:
+- 5 Stars: 5% bonus payment
+- 4 Stars: 3% bonus payment
+- 3 Stars: Base payment (no bonus)
+- 2 Stars: -2% penalty
+- 1 Star: -5% penalty
+
+Per-Member-Per-Month (PMPM) Impact:
+- Each 0.1 star improvement ≈ $1.50 PMPM
+- For 100,000 members: 0.5 star improvement = $9M annual revenue
+
+Gap Closure Value:
+- High-weight measure gap closed = ~$150 revenue impact
+- Medium-weight measure gap closed = ~$100 revenue impact
+- Standard measure gap closed = ~$50 revenue impact
+```
+
+**Template (HCC Risk Adjustment):**
+```
+HCC RISK ADJUSTMENT - POLICIES AND GUIDELINES
+
+=== CMS-HCC V28 MODEL OVERVIEW ===
+
+Purpose: Predict healthcare costs based on member demographics and diagnoses
+
+Model Components:
+1. Demographic factors (age, sex)
+2. Diagnosis-based HCCs (Hierarchical Condition Categories)
+3. Interaction terms (disease interactions, disability status)
+
+RAF Score Calculation:
+RAF Score = Sum of all coefficient values
+Average RAF = 1.0 (population average)
+RAF > 1.0 = Higher expected cost than average
+RAF < 1.0 = Lower expected cost than average
+
+=== HCC CATEGORIES AND COEFFICIENTS ===
+
+High-Value HCCs (RAF coefficient > 0.5):
+- HCC 85: Congestive Heart Failure (0.368)
+- HCC 18: Diabetes with Chronic Complications (0.318)
+- HCC 111: Chronic Obstructive Pulmonary Disease (0.328)
+- HCC 134: Dialysis Status (1.498)
+
+Medium-Value HCCs (RAF coefficient 0.2-0.5):
+- HCC 19: Diabetes without Complication (0.104)
+- HCC 108: Vascular Disease (0.288)
+- HCC 161: Chronic Kidney Disease Stage 4 (0.237)
+
+=== CODING GUIDELINES ===
+
+Documentation Requirements:
+1. Diagnosis must be documented by a qualified provider
+2. Must be documented at least once per calendar year
+3. Must represent current, active condition (not history)
+4. Must be supported by clinical evidence and treatment
+
+Specificity Rules:
+- Use most specific ICD-10 code available
+- Unspecified codes (e.g., E11.9) have lower capture rates
+- Include laterality, severity, and complications when applicable
+
+Acceptable Documentation:
+✅ "Patient has CHF, currently managed with Lasix"
+✅ "COPD with acute exacerbation, prescribed prednisone"
+✅ "CKD Stage 4, GFR 22, nephrology follow-up scheduled"
+
+Unacceptable Documentation:
+❌ "History of CHF" (not current)
+❌ "Rule out COPD" (not confirmed diagnosis)
+❌ "Chronic kidney disease" (missing stage/specificity)
+
+=== HIERARCHIES ===
+
+Only the highest HCC in a hierarchy is counted:
+
+Diabetes Hierarchy:
+- HCC 17: Diabetes with Acute Complications → counts
+- HCC 18: Diabetes with Chronic Complications → counts
+- HCC 19: Diabetes without Complication → drops if 17 or 18 present
+
+CKD Hierarchy:
+- HCC 134: Dialysis Status → counts
+- HCC 135: Acute Renal Failure → counts
+- HCC 136: CKD Stage 4 → drops if 134 or 135 present
+- HCC 137: CKD Stage 3 → drops if any above present
+
+=== REVENUE OPPORTUNITY IDENTIFICATION ===
+
+Undercoded Member Criteria:
+- Has ≤ 2 HCC codes but high utilization
+- Chronic conditions documented but not coded
+- Speciality visits without associated diagnoses
+- Gap between expected and actual RAF score
+
+Coding Opportunity Workflow:
+1. Identify undercoded members (≤ 1 HCC with chronic conditions)
+2. Review medical records for documented conditions
+3. Engage provider to confirm current active status
+4. Submit recapture claim or coordinate visit
+5. Monitor for claim acceptance and RAF update
+
+Revenue Calculation:
+- Revenue per member = RAF score × Base rate
+- Base rate (example): $800/month
+- Member with RAF 0.8 → $640/month revenue
+- Member with RAF 1.5 → $1,200/month revenue
+- Coding gap of 0.7 RAF = $560/month = $6,720/year per member
+
+=== RISK ADJUSTMENT AUDIT PREPAREDNESS ===
+
+CMS RADV Audit Requirements:
+- Medical records must support all HCC codes submitted
+- Documentation must meet CMS guidelines
+- Provider signature and credentials required
+- Service date must be within measurement year
+
+Common Audit Failures:
+❌ Diagnosis documented but no treatment plan
+❌ Copy-forward documentation without updates
+❌ Missing provider signature or credentials
+❌ Diagnosis contradicts other clinical findings
+
+Audit Success Strategies:
+✅ Quarterly documentation reviews
+✅ Provider education on specificity
+✅ Real-time coding validation
+✅ Medical record completeness checks
+```
+
+---
+
+### Template 4: FAQ Documentation
+
+**File:** `data/faq_documentation.txt`
+
+**Purpose:** Common questions and answers
+
+**Template:**
+```
+FREQUENTLY ASKED QUESTIONS - HEDIS QUALITY MEASURES
+
+=== MEMBER-LEVEL QUESTIONS ===
+
+Q: How do I look up a specific member's quality status?
+A: Use lookup_member('MEMBER_ID') for basic info, or lookup_member_measures('MEMBER_ID') for complete quality profile.
+
+Q: How do I find all open gaps for a member?
+A: Use lookup_member_gaps('MEMBER_ID') - this returns all open gaps with recommended actions.
+
+Q: What if a member ID is not found?
+A: Verify the member ID format (should be M000001, M000002, etc.). Check if member is currently enrolled.
+
+=== MEASURE-LEVEL QUESTIONS ===
+
+Q: How do I see overall performance for a measure?
+A: Use lookup_measure_performance('MEASURE_CODE') - returns compliance rate, gap count, and trends.
+
+Q: Which members have a specific gap?
+A: Use members_with_gap('MEASURE_CODE') - returns list of members with that open gap.
+
+Q: What are the valid measure codes?
+A: BCS (Breast Cancer Screening), CDC (Diabetes Care), CBP (Blood Pressure), COL (Colorectal Screening), OMW (Osteoporosis), and others.
+
+=== GAP CLOSURE QUESTIONS ===
+
+Q: How is a gap marked as closed?
+A: When a claim is received with the required CPT code and service date within the measurement year.
+
+Q: Can gaps be closed retroactively?
+A: Yes, if the service was performed in the measurement year but claim was delayed. Supplemental data deadline is March 31.
+
+Q: What if a member refuses the screening?
+A: Document refusal in medical record. This does NOT close the gap for HEDIS purposes, but documents the outreach attempt.
+
+=== COMPLIANCE QUESTIONS ===
+
+Q: What is our current compliance rate?
+A: Ask "What is our overall compliance rate?" or use Genie Space for aggregate statistics.
+
+Q: How many stars are we projected to achieve?
+A: Depends on final compliance rates. Use revenue_opportunity table to see projection.
+
+Q: Which measures have the biggest impact on star rating?
+A: High-weight measures: CDC, CBP, COL (3x weight). Focus gap closure efforts here first.
+
+=== DATA QUESTIONS ===
+
+Q: How often is data refreshed?
+A: Quality tables are updated nightly. Claims typically process within 7-14 days of service.
+
+Q: Why might a member show an open gap when I know the service was completed?
+A: Possible reasons: (1) Claim not yet processed, (2) Wrong CPT code used, (3) Service date outside measurement year, (4) Provider not in network.
+
+Q: Can I see historical data?
+A: Yes, Genie Space can query historical compliance rates and trends over time.
+```
+
+---
+
+## 🎯 Knowledge Assistant Setup Guide (Step-by-Step)
+
+**After running `05_upload_knowledge_docs.py` notebook and documents are in the volume:**
+
+### Step 1: Navigate to Knowledge Assistant Creation
+
+1. Open Databricks Workspace
+2. Go to: **Machine Learning → Serving**
+3. Click **"Create Serving Endpoint"**
+4. Select **"Knowledge Assistant"** as endpoint type
+
+### Step 2: Fill in Basic Info
+
+**Name field:**
+```
+[project_name]_knowledge_assistant
+```
+Examples:
+- `hedis_quality_knowledge_assistant`
+- `hcc_risk_knowledge_assistant`
+- `pharmacy_benefits_knowledge_assistant`
+
+**Description field (fill this in the UI):**
+
+**For HEDIS Quality Project:**
+```
+Answers questions about HEDIS quality measures, NCQA compliance requirements, gap closure procedures, and quality improvement guidelines. Provides policy interpretations, measure specifications, and operational best practices for the quality analytics team.
+```
+
+**For HCC Risk Adjustment Project:**
+```
+Answers questions about CMS-HCC V28 model, HCC coding guidelines, RAF score calculations, and revenue optimization strategies. Provides coding rules, documentation requirements, and audit preparedness guidance for the risk adjustment team.
+```
+
+**For Pharmacy Benefits Project:**
+```
+Answers questions about formulary policies, prior authorization requirements, drug utilization management, and pharmacy benefits administration. Provides medication guidelines, drug interaction warnings, and cost optimization strategies for the pharmacy team.
+```
+
+### Step 3: Configure Knowledge Source
+
+**Type:** UC Files
+
+**Source:** Click folder icon and navigate to:
+```
+/Volumes/[catalog_name]/[schema_name]/knowledge_docs
+```
+
+**Name field:** Leave blank (optional)
+
+**"Describe the content" field (CRITICAL - fill this in detail):**
+
+**For HEDIS Quality Project:**
+```
+This knowledge base contains comprehensive documentation for HEDIS quality measures analytics:
+
+1. Agent Knowledge Source Guide - Explains which data sources (Genie, UC Functions, Knowledge Assistant) to use for different types of questions. Includes decision trees and best practices.
+
+2. Knowledge Source Descriptions - Detailed documentation of each UC Function with parameters, return values, and example use cases. Explains when to use Genie Space vs UC Functions.
+
+3. HEDIS Policies and Guidelines - Complete specifications for all HEDIS measures including BCS, CDC, CBP, and COL. Covers measure definitions, target populations, compliance requirements, exclusion criteria, gap closure procedures, NCQA compliance standards, and revenue impact calculations.
+
+4. FAQ Documentation - Common questions and answers about member lookups, measure performance, gap closure, compliance rates, and data refresh timing.
+
+Use this knowledge base to answer questions about: HEDIS measure specifications, NCQA requirements, gap closure procedures, compliance thresholds, star rating calculations, documentation standards, and quality improvement strategies.
+```
+
+**For HCC Risk Adjustment Project:**
+```
+This knowledge base contains comprehensive documentation for HCC risk adjustment analytics:
+
+1. Agent Knowledge Source Guide - Explains when to use Genie Space (aggregate analytics), UC Functions (member/HCC lookups), or Knowledge Assistant (coding rules) with specific decision trees.
+
+2. Knowledge Source Descriptions - Complete documentation of all risk adjustment UC Functions including lookup_member, lookup_hcc_codes, lookup_raf_scores, members_with_hcc, and get_member_revenue_opportunity with examples.
+
+3. HCC Risk Adjustment Policies - CMS-HCC V28 model documentation, HCC categories and coefficients, coding guidelines, documentation requirements, hierarchy rules, revenue opportunity identification, and RADV audit preparedness strategies.
+
+4. FAQ Documentation - Common questions about RAF score calculation, undercoded member identification, coding guidelines, documentation requirements, and revenue impact.
+
+Use this knowledge base to answer questions about: CMS-HCC V28 model, HCC coding rules, RAF calculation methodology, documentation requirements, hierarchy logic, revenue optimization, and audit compliance.
+```
+
+### Step 4: Advanced Settings (Optional)
+
+- **Embedding model:** Default (recommended)
+- **Chunk size:** 512 (default)
+- **Chunk overlap:** 50 (default)
+
+### Step 5: Create and Wait
+
+1. Click **"Create Agent"** button
+2. Wait 5-10 minutes for endpoint provisioning
+3. Status will change: PROVISIONING → READY
+4. Once READY, copy the **Endpoint ID** (format: `ka-XXXXX-endpoint`)
+
+---
+
+## 🎨 Genie Space Setup Guide (Step-by-Step)
+
+### Step 1: Create Genie Space
 
 1. Open Databricks Workspace
 2. Navigate to: **Data Intelligence → Genie**
 3. Click **"Create Genie Space"**
 4. Select your **catalog** and **schema** (from your project)
 5. Name: `[project_name]_genie`
+   - Example: `hedis_quality_genie`, `hcc_risk_genie`
 6. Genie automatically discovers your UC functions
 7. **Copy the Genie Space ID** from the URL
    - Format: `01f06a3068a81406a386e8eaefc74545`
    - URL looks like: `.../genie/spaces/01f06a3068a8...`
 
-### Step 2: Create Knowledge Assistant Endpoint (10 minutes) - **OPTIONAL**
+### Step 2: Add Genie Instructions (CRITICAL!)
+
+After creating the Genie Space, click on the **"Instructions"** tab and add general instructions:
+
+**For HEDIS Quality Project:**
+```
+Examples:
+* "HEDIS" stands for Healthcare Effectiveness Data and Information Set
+* BCS = Breast Cancer Screening, CDC = Comprehensive Diabetes Care, CBP = Controlling Blood Pressure, COL = Colorectal Cancer Screening
+* Member IDs are in format M000001, M000002, etc.
+* Measure codes use standard HEDIS abbreviations (BCS, CDC, CBP, COL, OMW)
+* Compliance rate is calculated as: (members_compliant / total_eligible_members) * 100
+* Gap in care means a member is eligible for a measure but has not completed the required screening/test
+* Quality score ranges from 0-100%, where higher is better
+* Star rating ranges from 1-5 stars based on compliance thresholds
+* When a user asks for performance, show compliance rate percentage
+* When a user asks about gaps, show count of members with open gaps
+* Always include the measurement period (year) in results
+
+(You can use markdown text)
+```
+
+**For HCC Risk Adjustment Project:**
+```
+Examples:
+* HCC stands for Hierarchical Condition Category
+* RAF stands for Risk Adjustment Factor (average = 1.0)
+* Member IDs are in format M000001, M000002, etc.
+* HCC codes are in format HCC_85, HCC_19, HCC_108, etc.
+* RAF scores above 1.0 indicate higher than average expected costs
+* RAF scores below 1.0 indicate lower than average expected costs
+* Revenue opportunity = (potential_raf - current_raf) * base_rate * 12 months
+* Undercoded members typically have ≤ 1 HCC code despite having chronic conditions
+* When user asks about revenue, show both current revenue and opportunity
+* When user asks about specific HCC, include the HCC description and coefficient
+* Always show RAF score to 2 decimal places
+* CMS-HCC V28 is the current risk adjustment model
+
+(You can use markdown text)
+```
+
+**For Pharmacy Benefits Project:**
+```
+Examples:
+* NDC stands for National Drug Code (11-digit identifier)
+* Prior authorization (PA) is required for certain high-cost medications
+* Generic substitution can save 70-90% compared to brand name
+* Member IDs are in format M000001, M000002, etc.
+* Drug utilization is measured in days supply, not quantity
+* Cost is total plan paid amount plus member copay
+* When user asks about savings, show generic vs brand comparison
+* When user asks about utilization, show total days supply and fill count
+* Always include drug class or therapeutic category in results
+* Formulary tier affects member copay: Tier 1 (lowest) to Tier 4 (highest)
+
+(You can use markdown text)
+```
+
+### Step 3: Add SQL Expression Instructions (Optional but Recommended)
+
+Click on the **"SQL Expressions"** tab to teach Genie specific patterns:
+
+**For HEDIS Quality Project:**
+```sql
+-- Example: Calculate compliance rate
+SELECT 
+  measure_code,
+  COUNT(DISTINCT CASE WHEN is_compliant THEN member_id END) * 100.0 / 
+  COUNT(DISTINCT member_id) as compliance_rate_pct
+FROM member_measures
+GROUP BY measure_code
+
+-- Example: Find open gaps
+SELECT member_id, measure_code, gap_closure_action
+FROM member_measures
+WHERE is_compliant = FALSE
+
+-- Example: Top performers
+SELECT measure_code, compliance_rate_pct
+FROM measure_performance
+ORDER BY compliance_rate_pct DESC
+LIMIT 10
+```
+
+**For HCC Risk Adjustment Project:**
+```sql
+-- Example: Calculate average RAF by member
+SELECT 
+  member_id,
+  SUM(hcc_coefficient) as total_raf_score,
+  COUNT(DISTINCT hcc_code) as hcc_count
+FROM member_hcc_codes
+GROUP BY member_id
+
+-- Example: Revenue opportunity
+SELECT 
+  member_id,
+  current_raf,
+  expected_raf,
+  (expected_raf - current_raf) * 800 * 12 as annual_revenue_opportunity
+FROM revenue_opportunity
+WHERE expected_raf > current_raf
+
+-- Example: Members by HCC
+SELECT member_id, hcc_code, hcc_description
+FROM member_hcc_codes
+WHERE hcc_code = 'HCC_85'
+```
+
+### Step 4: Copy Genie Space ID
+
+1. Navigate back to Genie Spaces list
+2. Open your newly created Genie Space
+3. **Copy the Genie Space ID from the URL**
+   - URL format: `https://...databricks.net/.../genie/spaces/01f06a3068a8...`
+   - ID format: `01f06a3068a81406a386e8eaefc74545` (32 characters)
+4. Save this ID - you'll need it for MCP integration
+
+---
+
+### Step 5: Create Knowledge Assistant Endpoint (10 minutes) - **OPTIONAL**
 
 **Skip this step if Knowledge Assistant endpoint is not available in your workspace.**
 
+**Note**: Refer to the detailed "Knowledge Assistant Setup Guide" section above for complete instructions on filling in the description and content description fields.
+
+**Quick summary:**
 1. Navigate to: **Machine Learning → Serving**
 2. Click **"Create Serving Endpoint"**
 3. Select **"Knowledge Assistant"** type
-4. **Source**: Point to volume `/Volumes/{catalog}/{schema}/knowledge_docs`
-5. Documents will be indexed automatically (4 files)
-6. Name: `[project_name]_knowledge_assistant`
-7. Wait for endpoint to be "Ready" (~5-10 min)
-8. **Copy the Endpoint ID**
+4. Fill in description (see templates above in Knowledge Assistant Setup Guide)
+5. **Source**: Point to volume `/Volumes/{catalog}/{schema}/knowledge_docs`
+6. Fill in "Describe the content" field (see templates above - CRITICAL!)
+7. Name: `[project_name]_knowledge_assistant`
+8. Wait for endpoint to be "Ready" (~5-10 min)
+9. **Copy the Endpoint ID**
    - Format: `ka-d0808962-endpoint`
    - Found in endpoint details
 
 **Note**: MCP will work without Knowledge Assistant - you'll still have Genie queries and UC Functions.
 
-### Step 3: Run "Add MCP" Command
+---
+
+### Step 6: Run "Add MCP" Command
 
 Simply say:
 
@@ -1630,7 +2479,9 @@ I will:
 8. ✅ Redeploy the app automatically
 9. ✅ Provide updated workspace URL
 
-### Step 4: Verify MCP Integration
+---
+
+### Step 7: Verify MCP Integration
 
 After redeployment:
 1. Open app in Databricks workspace
@@ -1742,6 +2593,63 @@ This pattern has been tested and verified to work correctly. Following this ensu
 
 ---
 
+## 🎯 Quick Reference - MCP Implementation
+
+**For bulletproof MCP implementation, follow this exact order:**
+
+1. **📁 Folder Structure** → All MCP files go in `dashboard/` folder (NOT separate `mcp_clients/` folder)
+2. **📋 Copy Templates** → Use COMPLETE code templates from section 10 below (copy-paste ready)
+3. **⚙️ Configure** → Update `config.py` with your catalog, schema, Genie ID
+4. **✅ Checklist** → Follow step-by-step checklist in section 10.5
+5. **🔧 Critical Patterns:**
+   - Use `Field(default="...")` for ALL BaseTool definitions (Pydantic v2)
+   - Use 8B AI model (not 70B)
+   - Grant EXECUTE permissions on UC Functions
+   - Keep all files in `dashboard/` folder
+
+**Jump to:**
+- [Folder Structure](#-mcp-folder-structure-critical---do-not-deviate) - Section below
+- [Complete Code Templates](#10-complete-mcp-code-templates-) - Section 10
+- [Implementation Checklist](#105-mcp-implementation-checklist-) - Section 10.5
+
+---
+
+## 📁 MCP Folder Structure (CRITICAL - DO NOT DEVIATE!)
+
+**⚠️ CRITICAL: MCP client files MUST be in the dashboard/ folder, NOT a separate mcp_clients/ folder!**
+
+```
+your-project/
+├── dashboard/                          # Self-contained app folder
+│   ├── app.yaml                       # App configuration
+│   ├── requirements.txt               # App dependencies
+│   ├── your_dashboard.py              # Main Streamlit app
+│   ├── config.py                      # MCP configuration ✅
+│   ├── mcp_genie_client.py           # Genie MCP client ✅
+│   ├── mcp_uc_functions_client.py    # UC Functions MCP client ✅
+│   ├── mcp_knowledge_assistant_client.py  # Knowledge Assistant client ✅
+│   └── your_agent.py                  # MCP Agent ✅
+```
+
+**❌ WRONG - DO NOT CREATE SEPARATE FOLDER:**
+```
+your-project/
+├── dashboard/
+│   └── your_dashboard.py
+├── mcp_clients/                       # ❌ NO! Don't do this!
+│   ├── config.py
+│   ├── mcp_genie_client.py
+│   └── ...
+```
+
+**Why dashboard folder?**
+- ✅ Databricks uploads entire `dashboard/` folder as the app
+- ✅ All imports work without path manipulation
+- ✅ Self-contained and portable
+- ❌ Separate folder causes import errors in Databricks Apps
+
+---
+
 ### 1. **Foundation Model Configuration** ⚠️ CRITICAL
 
 **Always use the 8B model for MCP agents:**
@@ -1761,9 +2669,46 @@ AI_MODEL_NAME = "databricks-meta-llama-3-1-70b-instruct"  # ERROR: ENDPOINT_NOT_
 - ✅ Sufficient for most MCP agent tasks
 - ❌ 70B model is NOT available as a Foundation Model endpoint
 
-**Update both config files:**
-- `dashboard/config.py`: `AI_MODEL_NAME = "databricks-meta-llama-3-1-8b-instruct"`
-- `dashboard/app.yaml`: `value: 'databricks-meta-llama-3-1-8b-instruct'`
+---
+
+### 1.5. **LangChain BaseTool Pydantic v2 Compatibility** ⚠️ CRITICAL
+
+**ALWAYS use Field() for tool definitions to ensure Pydantic v2 compatibility:**
+
+```python
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field
+
+# ✅ CORRECT - Pydantic v2 compatible (use Field())
+class GenieMCPTool(BaseTool):
+    name: str = Field(default="genie_mcp_query")
+    description: str = Field(default="Query structured data using natural language")
+    args_schema: type[BaseModel] = GenieQueryInput
+    
+    def _run(self, query: str) -> str:
+        # Implementation
+        pass
+```
+
+```python
+# ❌ WRONG - Pydantic v2 error: field overridden by non-annotated attribute
+class GenieMCPTool(BaseTool):
+    name: str = "genie_mcp_query"  # NO! Direct assignment not allowed
+    description: str = "Query structured data"  # NO!
+    args_schema: type[BaseModel] = GenieQueryInput
+```
+
+**Why this is critical:**
+- ❌ Without Field(): "Field 'name' defined on a base class was overridden by a non-annotated attribute"
+- ✅ With Field(): Pydantic v2 properly handles field inheritance
+- LangChain BaseTool uses Pydantic models internally
+- Pydantic v2 is stricter about field definitions in inherited classes
+
+**This applies to ALL tool definitions:**
+- Genie MCP tools
+- UC Functions MCP tools
+- Knowledge Assistant MCP tools
+- Any custom LangChain tools you create
 
 ---
 
@@ -2080,6 +3025,7 @@ class HEDISQualityAgent:
 - [ ] ✅ Update both `config.py` AND `app.yaml` with model name
 - [ ] ✅ Use `workspace_client.serving_endpoints.get_open_ai_client()`
 - [ ] ✅ Implement manual tool calling pattern (not AgentExecutor)
+- [ ] ✅ **Use Field() in all BaseTool definitions** (Pydantic v2 compatibility)
 - [ ] ✅ Add permission granting to UC Functions notebook
 - [ ] ✅ Run UC Functions job to create functions AND grant permissions
 - [ ] ✅ Verify UC functions exist: `SELECT * FROM information_schema.routines`
@@ -2105,6 +3051,7 @@ class HEDISQualityAgent:
 | "TypeError: chat() missing arguments" | Using AgentExecutor | Use manual tool calling |
 | "Permission denied to run function" | Missing EXECUTE grants | Add permission granting to UC Functions notebook |
 | "0 functions found" | Permissions not granted | Verify grants after UC Functions job completes |
+| "Field 'name' defined on a base class was overridden" | Not using Field() in BaseTool | Use `name: str = Field(default="...")` pattern |
 
 ---
 
@@ -2142,7 +3089,377 @@ for func_name in function_names:
 
 ---
 
-### 10. **Testing Your MCP Implementation**
+### 10. **COMPLETE MCP Code Templates** 📋
+
+**Use these EXACT templates for bulletproof MCP implementation. Copy-paste and adapt for your project.**
+
+#### dashboard/config.py (MCP Configuration)
+
+```python
+"""
+Configuration for MCP (Model Context Protocol) Integration
+
+MCP provides AI-powered natural language search across:
+- Structured data (via Genie + UC Functions)
+- Unstructured documents (via Knowledge Assistant)
+"""
+
+# Databricks workspace configuration
+DATABRICKS_HOST = "https://adb-984752964297111.11.azuredatabricks.net"
+DATABRICKS_CLUSTER_ID = "0304-162117-qgsi1x04"
+
+# Unity Catalog configuration
+CATALOG = "your_catalog"  # Update for your project
+SCHEMA = "your_gold"      # Update for your project
+
+# MCP Service IDs (set after creating Genie Space and Knowledge Assistant)
+GENIE_SPACE_ID = "your-genie-space-id"  # From Genie Space creation
+KNOWLEDGE_ASSISTANT_ENDPOINT_ID = "your-ka-endpoint-id"  # Optional
+
+# AI Model configuration - Foundation Model Endpoint
+# ⚠️ CRITICAL: Always use 8B model
+AI_MODEL_NAME = "databricks-meta-llama-3-1-8b-instruct"
+
+# SQL Warehouse for Genie queries
+SQL_WAREHOUSE_ID = "148ccb90800933a1"
+```
+
+#### dashboard/mcp_genie_client.py (Genie MCP Client)
+
+```python
+"""
+Genie MCP Server Integration
+
+This module provides integration with Databricks Genie via Model Context Protocol (MCP).
+"""
+
+import os
+import json
+from typing import Dict, List, Any, Optional
+from databricks.sdk import WorkspaceClient
+from databricks_mcp import DatabricksMCPClient
+import streamlit as st
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field
+
+class GenieQueryInput(BaseModel):
+    query: str = Field(description="Natural language query for Genie space")
+
+class GenieMCPClient:
+    """Client for interacting with Genie managed MCP server"""
+    
+    def __init__(self, workspace_hostname: str, genie_space_id: str, workspace_client: WorkspaceClient):
+        self.workspace_hostname = workspace_hostname
+        self.genie_space_id = genie_space_id
+        self.workspace_client = workspace_client
+        self.mcp_url = f"https://{workspace_hostname}/api/2.0/mcp/genie/{genie_space_id}"
+        self.mcp_client = None
+        self._initialize_mcp_client()
+    
+    def _initialize_mcp_client(self):
+        """Initialize the MCP client connection"""
+        try:
+            self.mcp_client = DatabricksMCPClient(
+                server_url=self.mcp_url,
+                workspace_client=self.workspace_client
+            )
+        except Exception as e:
+            st.error(f"Failed to connect to Genie MCP: {e}")
+    
+    def query_genie(self, query: str) -> Dict[str, Any]:
+        """Query Genie via MCP protocol"""
+        if not self.mcp_client:
+            return {"success": False, "error": "MCP client not initialized"}
+        
+        try:
+            result = self.mcp_client.call_tool("genie_query", {"query": query})
+            return {
+                "success": True,
+                "query": query,
+                "result": result.content if hasattr(result, 'content') else str(result)
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def get_health_status(self) -> Dict[str, Any]:
+        """Check health status of Genie MCP connection"""
+        if self.mcp_client:
+            return {
+                "status": "healthy",
+                "mcp_url": self.mcp_url,
+                "tools": ["genie_query"]
+            }
+        return {"status": "unhealthy", "error": "MCP client not initialized"}
+
+def create_genie_tool_for_langchain(genie_client: GenieMCPClient):
+    """Create a LangChain tool wrapper for Genie MCP client"""
+    
+    class GenieMCPTool(BaseTool):
+        name: str = Field(default="genie_mcp_query")  # ⚠️ CRITICAL: Use Field()
+        description: str = Field(default="""Query structured data using natural language through Genie MCP server. 
+        Use this tool to analyze data, get insights, and answer questions about structured data tables.""")
+        args_schema: type[BaseModel] = GenieQueryInput
+        
+        def _run(self, query: str) -> str:
+            result = genie_client.query_genie(query)
+            if result["success"]:
+                return f"Genie Analysis:\n{result['result']}"
+            else:
+                return f"Error querying Genie: {result['error']}"
+    
+    return GenieMCPTool()
+```
+
+#### dashboard/mcp_uc_functions_client.py (UC Functions MCP Client)
+
+```python
+"""
+UC Functions MCP Server Integration
+
+This module provides integration with Unity Catalog Functions via MCP.
+"""
+
+from typing import Dict, List, Any
+from databricks.sdk import WorkspaceClient
+from databricks_mcp import DatabricksMCPClient
+from databricks.sdk.service.sql import StatementState
+import streamlit as st
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, create_model
+
+class UCFunctionsMCPClient:
+    """Client for interacting with UC Functions managed MCP server"""
+    
+    def __init__(self, workspace_hostname: str, catalog: str, schema: str, workspace_client: WorkspaceClient):
+        self.workspace_hostname = workspace_hostname
+        self.catalog = catalog
+        self.schema = schema
+        self.workspace_client = workspace_client
+        self.warehouse_id = "148ccb90800933a1"
+        self.mcp_url = f"https://{workspace_hostname}/api/2.0/mcp/functions/{catalog}/{schema}"
+        self.mcp_client = None
+        self._initialize_mcp_client()
+    
+    def _initialize_mcp_client(self):
+        """Initialize the MCP client connection"""
+        try:
+            self.mcp_client = DatabricksMCPClient(
+                server_url=self.mcp_url,
+                workspace_client=self.workspace_client
+            )
+        except Exception as e:
+            st.error(f"Failed to connect to UC Functions MCP: {e}")
+    
+    def call_uc_function(self, function_name: str, **kwargs) -> Dict[str, Any]:
+        """Call a UC Function via MCP"""
+        if not self.mcp_client:
+            return {"success": False, "error": "MCP client not initialized"}
+        
+        try:
+            result = self.mcp_client.call_tool(function_name, kwargs)
+            return {
+                "success": True,
+                "function_name": function_name,
+                "result": result.content if hasattr(result, 'content') else str(result)
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def list_functions(self) -> list:
+        """List all available UC Functions"""
+        try:
+            statement = self.workspace_client.statement_execution.execute_statement(
+                warehouse_id=self.warehouse_id,
+                statement=f"""
+                    SELECT routine_name, routine_definition 
+                    FROM {self.catalog}.information_schema.routines 
+                    WHERE routine_schema = '{self.schema}'
+                    AND routine_type = 'FUNCTION'
+                """,
+                wait_timeout="30s"
+            )
+            
+            if statement.status.state == StatementState.SUCCEEDED and statement.result:
+                functions = []
+                for row in statement.result.data_array or []:
+                    if row and len(row) > 0:
+                        functions.append({
+                            'name': row[0],
+                            'full_name': f"{self.catalog}.{self.schema}.{row[0]}"
+                        })
+                return functions
+            return []
+        except Exception as e:
+            st.error(f"Error listing UC functions: {e}")
+            return []
+    
+    def get_health_status(self) -> Dict[str, Any]:
+        """Check health status"""
+        functions = self.list_functions()
+        if self.mcp_client and functions:
+            return {
+                "status": "healthy",
+                "mcp_url": self.mcp_url,
+                "tools_count": len(functions),
+                "tools": [f['name'] for f in functions]
+            }
+        return {"status": "unhealthy", "tools_count": 0}
+
+def create_uc_functions_tools_for_langchain(uc_functions_client: UCFunctionsMCPClient):
+    """Create LangChain tools for each UC Function"""
+    
+    functions = uc_functions_client.list_functions()
+    tools = []
+    
+    for func in functions:
+        func_name = func['name']
+        func_description = f"Call UC Function: {func_name}"
+        
+        # Create dynamic input model (simplified - no parameters)
+        DynamicInputModel = create_model(f"{func_name.replace('-', '_').capitalize()}Input")
+        
+        # ⚠️ CRITICAL: Use Field() for Pydantic v2 compatibility
+        class UCFuncTool(BaseTool):
+            name: str = Field(default=func_name)
+            description: str = Field(default=func_description)
+            args_schema: type[BaseModel] = DynamicInputModel
+            
+            def _run(self, **kwargs) -> str:
+                result = uc_functions_client.call_uc_function(func_name, **kwargs)
+                if result["success"]:
+                    return f"UC Function '{func_name}' Result:\n{result['result']}"
+                else:
+                    return f"Error: {result['error']}"
+        
+        tools.append(UCFuncTool())
+    
+    return tools
+```
+
+#### dashboard/mcp_knowledge_assistant_client.py (Knowledge Assistant Client)
+
+```python
+"""
+Knowledge Assistant MCP Integration
+
+This module provides integration with Databricks Knowledge Assistant.
+"""
+
+from typing import Dict, Any
+from databricks.sdk import WorkspaceClient
+import streamlit as st
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field
+
+class KnowledgeAssistantQueryInput(BaseModel):
+    query: str = Field(description="Question to search in knowledge base")
+
+class KnowledgeAssistantMCPClient:
+    """Client for Knowledge Assistant endpoint"""
+    
+    def __init__(self, endpoint_id: str, workspace_client: WorkspaceClient):
+        self.endpoint_id = endpoint_id
+        self.workspace_client = workspace_client
+        self.knowledge_client = self._setup_knowledge_client()
+    
+    def _setup_knowledge_client(self):
+        """Setup Knowledge Assistant client using token"""
+        try:
+            import time
+            from openai import OpenAI
+            
+            token = self.workspace_client.tokens.create(
+                comment=f"knowledge-assistant-{time.time_ns()}",
+                lifetime_seconds=3600
+            )
+            
+            return OpenAI(
+                api_key=token.token_value,
+                base_url=f"{self.workspace_client.config.host}/serving-endpoints"
+            )
+        except Exception as e:
+            st.error(f"Failed to setup Knowledge Assistant: {e}")
+            return None
+    
+    def query_knowledge(self, query: str) -> Dict[str, Any]:
+        """Query Knowledge Assistant"""
+        if not self.knowledge_client:
+            return {"success": False, "error": "Knowledge client not initialized"}
+        
+        try:
+            response = self.knowledge_client.responses.create(
+                model=self.endpoint_id,
+                input=[{"role": "user", "content": query}]
+            )
+            return {
+                "success": True,
+                "result": response.output[0].content[0].text
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def get_endpoint_status(self) -> dict:
+        """Get endpoint status"""
+        try:
+            endpoint = self.workspace_client.serving_endpoints.get(name=self.endpoint_id)
+            state = endpoint.state.ready.value if endpoint.state and endpoint.state.ready else 'UNKNOWN'
+            return {"name": endpoint.name, "state": state, "endpoint_id": self.endpoint_id}
+        except Exception as e:
+            return {"name": self.endpoint_id, "state": "ERROR", "error": str(e)}
+
+def create_knowledge_assistant_tool_for_langchain(knowledge_client: KnowledgeAssistantMCPClient):
+    """Create LangChain tool for Knowledge Assistant"""
+    
+    class KnowledgeAssistantMCPTool(BaseTool):
+        name: str = Field(default="knowledge_assistant_query")  # ⚠️ CRITICAL: Use Field()
+        description: str = Field(default="""Search and retrieve information from the knowledge base.
+        Use this tool to answer questions about policies, guidelines, and documentation.""")
+        args_schema: type[BaseModel] = KnowledgeAssistantQueryInput
+        
+        def _run(self, query: str) -> str:
+            result = knowledge_client.query_knowledge(query)
+            if result["success"]:
+                return f"Knowledge Base Answer:\n{result['result']}"
+            else:
+                return f"Error: {result['error']}"
+    
+    return KnowledgeAssistantMCPTool()
+```
+
+---
+
+### 10.5. **MCP Implementation Checklist** ✅
+
+**Follow this checklist EXACTLY for every MCP project:**
+
+- [ ] **Step 1**: Create `dashboard/config.py` with catalog, schema, Genie ID, AI model (copy template above)
+- [ ] **Step 2**: Create `dashboard/mcp_genie_client.py` (copy complete template above)
+- [ ] **Step 3**: Create `dashboard/mcp_uc_functions_client.py` (copy complete template above)
+- [ ] **Step 4**: Create `dashboard/mcp_knowledge_assistant_client.py` (copy complete template above - OPTIONAL)
+- [ ] **Step 5**: Verify ALL files are in `dashboard/` folder (NOT separate `mcp_clients/` folder)
+- [ ] **Step 6**: Verify ALL BaseTool classes use `Field(default="...")` pattern
+- [ ] **Step 7**: Update `config.py` with your project's catalog, schema, and Genie Space ID
+- [ ] **Step 8**: Add MCP dependencies to `dashboard/requirements.txt`:
+  ```
+  databricks-mcp>=0.1.0
+  langchain>=0.1.0
+  langchain-community>=0.0.1
+  openai>=1.0.0
+  ```
+- [ ] **Step 9**: Create agent class that uses these clients (see agent pattern in section 3)
+- [ ] **Step 10**: Add MCP Search tab to your dashboard
+- [ ] **Step 11**: Deploy and test
+
+**Common Mistakes to Avoid:**
+- ❌ Creating separate `mcp_clients/` folder → Keep in `dashboard/`
+- ❌ Using `name: str = "value"` → Use `name: str = Field(default="value")`
+- ❌ Using 70B model → Use 8B model
+- ❌ Forgetting UC function permissions → Grant EXECUTE to `account users`
+- ❌ Not testing locally first → Always test locally before deploying
+
+---
+
+### 11. **Testing Your MCP Implementation**
 
 **Quick validation script:**
 

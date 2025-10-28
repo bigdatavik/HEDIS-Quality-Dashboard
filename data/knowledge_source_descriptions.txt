@@ -1,0 +1,263 @@
+DATA SOURCE DESCRIPTIONS - HEDIS Quality Measures
+
+=== GENIE SPACE ===
+The Genie Space provides natural language access to structured HEDIS quality data tables in the humana_quality.hedis_gold schema.
+
+Tables available:
+- quality_summary: Overall quality performance metrics and star rating projections
+- measure_performance: Performance by individual HEDIS measure with compliance rates
+- member_measures: Member-level measure compliance and gap status
+- gap_closure_tracking: Gap in care status, closure dates, and trending
+
+The Genie Space should be used for:
+- Aggregate statistics and trends
+- Cross-measure analysis and comparisons
+- Time-series queries (monthly, quarterly trends)
+- Cohort identification and segmentation
+- Performance benchmarking
+
+Example use cases:
+- "What percentage of members closed BCS gaps in Q4 2024?"
+- "Compare CDC performance across different age groups"
+- "Show me top 10 measures by gap count"
+- "What's our trend in overall compliance over the last 6 months?"
+- "How many members became compliant this month vs last month?"
+- "Show me measures where compliance dropped"
+
+Genie Space advantages:
+✅ Natural language queries (no SQL knowledge needed)
+✅ Fast aggregate calculations
+✅ Cross-table joins handled automatically
+✅ Time-based filtering and trending
+✅ Great for exploratory analysis
+
+=== UC FUNCTIONS ===
+Unity Catalog Functions provide fast, indexed lookups for specific members, measures, and gaps.
+
+All functions are in catalog: humana_quality, schema: hedis_gold
+
+---
+
+lookup_member(member_id STRING)
+  Purpose: Get complete member demographics and current quality status
+  Returns: Single member record with:
+    - member_id: Unique identifier
+    - first_name, last_name: Member name
+    - age: Current age
+    - sex: M/F
+    - eligible_measures_count: Number of applicable HEDIS measures
+    - compliant_measures_count: Number of measures where member is compliant
+    - open_gaps_count: Number of measures with open gaps
+    - overall_status: 'Compliant', 'Partial', or 'Non-Compliant'
+  Use when: Need basic member information and summary quality status
+  Example: lookup_member('M000001')
+  
+---
+
+lookup_member_measures(member_id STRING)
+  Purpose: Get detailed quality measure compliance for a specific member
+  Returns: All applicable HEDIS measures for the member with:
+    - member_id: Unique identifier
+    - measure_code: HEDIS measure code (BCS, CDC, CBP, etc.)
+    - measure_name: Full measure name
+    - is_compliant: TRUE/FALSE
+    - compliance_status: 'Compliant', 'Gap', or 'At Risk'
+    - last_service_date: Date of most recent qualifying service
+    - gap_closure_action: Recommended action if gap exists
+    - due_date: Date by which service should be completed
+  Use when: Need complete quality profile for a member
+  Example: lookup_member_measures('M000001')
+  Typical result: 3-8 measures per member (depending on eligibility)
+
+---
+
+lookup_member_gaps(member_id STRING)
+  Purpose: Get all open gaps in care for a specific member
+  Returns: Only measures where member has open gaps:
+    - member_id: Unique identifier
+    - measure_code: HEDIS measure code
+    - measure_name: Full measure name
+    - gap_type: 'Missing Service', 'Overdue', or 'At Risk'
+    - gap_closure_action: Specific recommended action
+    - days_until_due: Days remaining until end of measurement period
+    - priority: 'High', 'Medium', or 'Low'
+  Use when: Care management needs gap closure list for outreach
+  Example: lookup_member_gaps('M000001')
+  Typical result: 0-4 gaps per member
+  Note: Returns empty if member is fully compliant
+
+---
+
+members_with_gap(measure_code STRING)
+  Purpose: Find all members with an open gap for a specific measure
+  Returns: List of all members with gap:
+    - member_id: Unique identifier
+    - first_name, last_name: Member name
+    - age, sex: Demographics
+    - gap_type: Type of gap
+    - gap_closure_action: Recommended action
+    - days_until_due: Days remaining
+    - contact_phone: Member phone for outreach
+  Use when: Need to identify outreach cohort for gap closure campaign
+  Example: members_with_gap('BCS')
+  Typical result: Varies by measure (could be 100-5000 members)
+  Best practices:
+    - Use for targeted outreach campaigns
+    - Prioritize by days_until_due
+    - Filter by high-priority measures first (CDC, CBP, COL)
+
+---
+
+lookup_measure_performance(measure_code STRING)
+  Purpose: Get overall performance statistics for a specific measure
+  Returns: Aggregate performance metrics:
+    - measure_code: HEDIS measure code
+    - measure_name: Full measure name
+    - eligible_members: Total members eligible for measure
+    - compliant_members: Count of compliant members
+    - gap_members: Count with open gaps
+    - compliance_rate_pct: Percentage compliant (0-100)
+    - star_rating: Projected star rating (1-5)
+    - trend: 'Improving', 'Declining', or 'Stable'
+    - revenue_impact: Dollar impact of improving to next star level
+  Use when: Need measure-level summary for reporting
+  Example: lookup_measure_performance('CDC')
+  Use cases:
+    - Executive dashboards
+    - Monthly reporting
+    - Identifying underperforming measures
+
+---
+
+members_at_risk(measure_code STRING)
+  Purpose: Find members at risk of missing measure requirements (proactive identification)
+  Returns: Members who are currently compliant but at risk:
+    - member_id: Unique identifier
+    - first_name, last_name: Member name
+    - last_service_date: Date of most recent qualifying service
+    - days_since_service: Days since last service
+    - risk_level: 'High', 'Medium', or 'Low'
+    - proactive_action: Recommended preventive outreach
+    - projected_gap_date: Date when gap will open if no action
+  Use when: Proactive outreach planning to prevent gaps
+  Example: members_at_risk('CBP')
+  Typical result: 50-500 members depending on measure
+  Best practices:
+    - Run monthly for early intervention
+    - Focus on high-value measures
+    - Contact members before gap opens
+
+=== UC FUNCTIONS - PERFORMANCE CHARACTERISTICS ===
+
+Speed:
+- Individual lookups (lookup_member, lookup_member_measures): < 1 second
+- Filtered searches (members_with_gap, members_at_risk): 1-5 seconds
+- Aggregate queries (lookup_measure_performance): < 1 second
+
+Data Freshness:
+- Updated nightly at 2 AM
+- Claims typically process within 7-14 days of service
+- Real-time gap closure may have 1-day lag
+
+Function Permissions:
+- All functions have EXECUTE permission granted to 'account users'
+- App service principals have access automatically
+- No additional permissions needed for end users
+
+=== KNOWLEDGE ASSISTANT ===
+Document search covering HEDIS specifications, NCQA requirements, and operational procedures.
+
+Documents indexed in /Volumes/humana_quality/hedis_gold/knowledge_docs:
+1. Agent Knowledge Source Guide (this document)
+2. Data Source Descriptions (this document)
+3. HEDIS Policies and Guidelines
+4. FAQ Documentation
+
+Document coverage:
+
+1. HEDIS Measure Specifications
+   - Detailed measure definitions
+   - Target populations and age ranges
+   - Service requirements and CPT codes
+   - Exclusion criteria
+   - Compliance thresholds
+
+2. NCQA Compliance Requirements
+   - Documentation standards
+   - Reporting timelines
+   - Audit requirements
+   - Star rating thresholds
+   - Quality improvement protocols
+
+3. Gap Closure Procedures
+   - Step-by-step gap closure workflows
+   - Member outreach best practices
+   - Service delivery coordination
+   - Claims verification processes
+   - Documentation requirements
+
+4. Operational Guidelines
+   - Measure prioritization strategies
+   - Revenue impact calculations
+   - Performance benchmarking
+   - Troubleshooting common issues
+
+The Knowledge Assistant should be used for:
+- "What is" questions (definitions and specifications)
+- "How to" questions (procedures and workflows)
+- Policy interpretation and compliance questions
+- Regulatory requirements and audit preparation
+- Revenue impact methodology
+
+Example use cases:
+- "What are the exclusion criteria for BCS?"
+- "How do I document gap closure for audit purposes?"
+- "What is the NCQA requirement for CDC testing frequency?"
+- "What CPT codes qualify for CBP measure compliance?"
+- "How is star rating calculated from compliance rates?"
+- "What is the revenue impact of improving from 3 to 4 stars?"
+
+Knowledge Assistant advantages:
+✅ Searches unstructured policy documents
+✅ Provides context and explanations
+✅ Cites sources (NCQA, HEDIS specifications)
+✅ Answers "why" questions, not just "what"
+✅ Great for compliance and training
+
+=== COMBINING DATA SOURCES ===
+
+For complex questions, use multiple sources:
+
+Example 1: "Show me member M000001's BCS gap and explain how to close it"
+  Step 1: lookup_member_gaps('M000001') → Get specific gap details
+  Step 2: Knowledge Assistant search "BCS gap closure procedure" → Get process
+  Result: Data-driven answer with actionable guidance
+
+Example 2: "Which measures are underperforming and what can we do?"
+  Step 1: Genie Space → "Show me measures with compliance < 75%"
+  Step 2: Knowledge Assistant → "Best practices for improving HEDIS compliance"
+  Result: Identifies problem areas with improvement strategies
+
+Example 3: "Find high-risk diabetic members and explain outreach strategy"
+  Step 1: members_at_risk('CDC') → Get list of at-risk members
+  Step 2: Knowledge Assistant → "CDC member outreach best practices"
+  Result: Targeted cohort with proven outreach approach
+
+=== DATA QUALITY NOTES ===
+
+Known Limitations:
+- Claims processing lag: 7-14 days typical
+- Member eligibility updates: Monthly
+- Measure specifications: Annual updates (effective January 1)
+
+Data Validation:
+- All member_ids validated against enrollment table
+- Measure codes restricted to valid HEDIS codes
+- Dates validated for measurement year
+- Duplicate gap records removed
+
+Troubleshooting:
+- If gap doesn't show as closed after service: Check claim processing status
+- If member not found: Verify enrollment status and member_id format
+- If unexpected measure eligibility: Review member demographics against measure criteria
+
