@@ -58,15 +58,30 @@ def read_table(table_name: str) -> pd.DataFrame:
     """Read table from Databricks using SQL Connector"""
     conn = get_databricks_connection()
     if conn is None:
+        st.warning(f"⚠️ Connection is None for table: {table_name}")
         return pd.DataFrame()
     
     try:
+        full_table_name = f"{CATALOG}.{SCHEMA}.{table_name}"
         with conn.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM {CATALOG}.{SCHEMA}.{table_name}")
+            # First check if table exists and has data
+            cursor.execute(f"SELECT COUNT(*) as count FROM {full_table_name}")
+            count_result = cursor.fetchall_arrow().to_pandas()
+            row_count = count_result['count'].iloc[0] if not count_result.empty else 0
+            
+            if row_count == 0:
+                st.warning(f"⚠️ Table {full_table_name} exists but is empty (0 rows)")
+                return pd.DataFrame()
+            
+            # Now fetch the actual data
+            cursor.execute(f"SELECT * FROM {full_table_name}")
             result = cursor.fetchall_arrow().to_pandas()
+            # Silently load data (no UI messages during initialization)
             return result
     except Exception as e:
-        st.error(f"Error reading {table_name}: {e}")
+        st.error(f"❌ Error reading {table_name}: {e}")
+        import traceback
+        st.code(traceback.format_exc())
         return pd.DataFrame()
 
 
@@ -169,13 +184,12 @@ with st.sidebar:
     - Member-level insights
     """)
 
-# Load data
+# Load data (silently - only show errors if they occur)
 try:
     data = load_all_data()
     
-    if all(not df.empty for df in data.values()):
-        st.success("✅ Connected to Databricks - Data loaded successfully!")
-    else:
+    # Check if tables are empty (only show warning if there's an issue)
+    if not all(not df.empty for df in data.values()):
         st.warning("⚠️ Some tables are empty. Run data generation jobs first.")
         
 except Exception as e:

@@ -1,6 +1,6 @@
 # From Compliance Burden to Strategic Asset: An Art of the Possible for Healthcare Quality Teams
 
-## What if you could turn 45 data extractors into strategic analysts—in just 2 weeks?
+## What if your data analysts could focus on strategic analysis instead of data extraction—in just 2 weeks?
 
 ---
 
@@ -11,7 +11,7 @@
 
 ---
 
-> **📌 Note:** This is a demonstration using synthetic data to showcase what's possible with Databricks Intelligence Platform and Model Context Protocol. The scenarios, metrics, and use cases are based on typical healthcare payor challenges. All code and architecture are production-ready and available on GitHub.
+> **📌 Note:** This is a demonstration using synthetic data to showcase what's possible with Databricks Intelligence Platform and Model Context Protocol. The scenarios, metrics, and use cases are based on typical healthcare payer challenges. All code and architecture are production-ready and available on GitHub.
 
 ---
 
@@ -22,15 +22,15 @@
 
 ## The $20 Million Question
 
-Imagine you're a VP of Quality Analytics at a Medicare Advantage health plan covering 2 million members. Another urgent request lands in your inbox from care management:
+Meet Sarah. She is the VP of Quality Analytics at a Medicare Advantage health plan covering 2 million members. Another urgent request lands in her inbox from care management:
 
 > *"Which diabetic members over 65 have open gaps in eye exams and haven't been seen in 6 months?"*
 
-It's Monday morning. The question is simple. The answer is critical—finding these members quickly could prevent blindness, improve Star Ratings, and unlock millions in quality bonuses. But you know what comes next.
+It's Monday morning. The question is simple. The answer is critical—finding these members quickly could prevent blindness, improve Star Ratings, and unlock millions in quality bonuses. But Sarah knows what comes next.
 
-Your analyst team will spend **2-5 days** crafting SQL queries, joining tables, waiting for IT approval, and manually exporting to Excel. By Friday, you'll have an answer—but the care team will have moved on to the next crisis.
+Her analyst team will spend **2-5 days** crafting SQL queries, joining tables, waiting for IT approval, and manually exporting to Excel. By Friday, they'll have an answer—but the care team will have moved on to the next crisis.
 
-This isn't an exception. It's the daily reality at most healthcare payors.
+This isn't an exception. It's the daily reality at most healthcare payers.
 
 **And it's costing organizations an estimated $15-20 million per year in lost opportunities.**
 
@@ -40,13 +40,13 @@ This isn't an exception. It's the daily reality at most healthcare payors.
 
 ## The Compliance Trap
 
-Healthcare payors live and die by HEDIS quality measures—the compliance metrics that determine Star Ratings from CMS (Centers for Medicare & Medicaid Services). The stakes are existential:
+Healthcare payers live and die by HEDIS quality measures—the compliance metrics that determine Star Ratings from CMS (Centers for Medicare & Medicaid Services). The stakes are existential:
 
 - **Improve from 3.5 to 4.0 stars?** Unlock $15-20M in annual quality bonuses
 - **Drop below 3.0 stars?** Risk losing Medicare contracts entirely
 - **Miss a gap closure opportunity?** Watch members suffer preventable complications
 
-Yet typical quality analytics teams—often 40-50 analysts at mid-sized payors—spend most of their time extracting data rather than finding these opportunities.
+Yet typical quality analytics teams—often 40-50 highly skilled, expensive analysts at mid-sized payers—spend most of their time on data extraction, consolidation, and reconciliation rather than actual analysis. These high-value business professionals are stuck doing manual data work instead of strategic analysis.
 
 ### The Numbers Were Brutal:
 
@@ -60,7 +60,7 @@ Yet typical quality analytics teams—often 40-50 analysts at mid-sized payors�
 
 And the problem was getting worse. Every year, NCQA published updated measure specifications—500+ pages of dense policy documents. Analysts manually searched PDFs for exclusion criteria, leading to inconsistent interpretations and compliance errors.
 
-Sarah's team wasn't lazy. They were brilliant healthcare analysts trapped in a system that turned them into query machines.
+Sarah's team isn't lazy or unskilled. They're brilliant healthcare analysts—highly educated, expensive talent—trapped in a system that forces them to spend their days on data extraction, consolidation, and reconciliation instead of the strategic analysis they were hired to do.
 
 ---
 
@@ -154,7 +154,7 @@ When someone asks Genie: *"What's our compliance rate for diabetes care?"*
 
 The AI automatically calls `calculate_compliance_rate('CDC', 2025)` using the organization's official calculation logic. No Excel formulas. No room for interpretation. **One version of the truth.**
 
-**Potential Impact:** Eliminate compliance calculation errors (typically 5-7 per month at large payors)
+**Potential Impact:** Eliminate compliance calculation errors (typically 5-7 per month at large payers)
 
 #### 3. **Knowledge Assistant: Policy Intelligence**
 
@@ -197,7 +197,7 @@ databricks bundle deploy --target prod
 
 ## The Projected Impact: What Organizations Could Achieve
 
-Based on typical healthcare payor metrics, here's the potential transformation:
+Based on typical healthcare payer metrics, here's the potential transformation:
 
 ### Operational Impact Projections
 
@@ -229,7 +229,7 @@ Based on typical healthcare payor metrics, here's the potential transformation:
 
 The numbers tell part of the story, but the human impact could be even more significant.
 
-**Current Reality:** Analysts are query machines, burned out from repetitive SQL requests.
+**Current Reality:** Highly skilled analysts spend 80% of their time on data extraction, consolidation, and reconciliation rather than strategic analysis. Expensive talent stuck doing manual, repetitive work.
 
 **Art of the Possible:** Analysts become strategic advisors:
 - Building machine learning models to predict which members are most likely to close gaps
@@ -237,7 +237,7 @@ The numbers tell part of the story, but the human impact could be even more sign
 - Creating proactive outreach strategies to increase screenings
 
 **Imagine your senior analyst saying:**
-> *"Instead of writing 30 SQL queries a week, I'm building predictive models that help us intervene before gaps even open. I feel like an analyst again, not a report factory."*
+> *"I spent years getting my master's degree to become a data analyst, but I was spending 80% of my time extracting data, consolidating spreadsheets, and reconciling numbers. Now I'm finally doing what I was hired to do—building predictive models that help us intervene before gaps even open. I'm doing strategic analysis again, not just manual data work."*
 
 **Imagine your care managers saying:**
 > *"I used to email analytics and wait 3 days. Now I type my question, get an answer in 30 seconds, and move on to actually helping members."*
@@ -328,7 +328,6 @@ databricks bundle deploy --target prod
 
 ### Resources
 - **Full code & documentation:** [github.com/bigdatavik/HEDIS-Quality-Dashboard](https://github.com/bigdatavik/HEDIS-Quality-Dashboard)
-- **Environment guide:** See `MY_ENVIRONMENT.md` for bulletproof setup instructions
 - **Knowledge docs templates:** See `data/` folder for document examples
 
 ---
@@ -369,7 +368,6 @@ The answer is simpler than you think. And faster than you expect.
 
 **Want to explore the code?** The entire project is open and ready to customize:
 - **Repo:** [github.com/bigdatavik/HEDIS-Quality-Dashboard](https://github.com/bigdatavik/HEDIS-Quality-Dashboard)
-- **Docs:** See `MY_ENVIRONMENT.md` for complete setup guide
 
 ---
 
@@ -385,24 +383,8 @@ The technology is ready. The platform is proven. The potential ROI is measurable
 
 ---
 
-### About the Author
-
-**Vik Malhotra** is a Solutions Architect at Databricks, specializing in healthcare analytics and AI-powered data platforms. He partners with organizations to transform their data teams from reactive report factories to proactive strategic advisors. Previously, he built analytics platforms for Fortune 500 healthcare payors and has deep expertise in HEDIS quality measures, claims analytics, and regulatory compliance.
-
-*I share open-source projects and write about data engineering, AI platforms, and healthcare analytics. Connect on LinkedIn or explore my GitHub projects.*
-
----
-
 ### Tags
 `#Healthcare` `#DataAnalytics` `#ArtificialIntelligence` `#Databricks` `#HEDIS` `#QualityMeasures` `#DataPlatform` `#BusinessIntelligence` `#MLOps` `#DigitalTransformation`
-
----
-
-**📊 Live Dashboard:** [View the actual working dashboard](https://hedis-quality-dashboard-984752964297111.11.azure.databricksapps.com)
-
-**💻 Source Code:** [github.com/bigdatavik/HEDIS-Quality-Dashboard](https://github.com/bigdatavik/HEDIS-Quality-Dashboard)
-
-**📚 Documentation:** See `MY_ENVIRONMENT.md` in the repo for complete implementation guide
 
 ---
 

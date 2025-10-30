@@ -21,15 +21,15 @@ Using Databricks Intelligence Platform and Model Context Protocol (MCP), I demon
 Potential impact? $8-19M in value during Year 1 (varies by organization size).
 
 The secret? Three integrated capabilities:
-• Natural language queries (Genie)
-• Custom business logic as AI functions (UC Functions)
-• Document intelligence (Knowledge Assistant)
+• Natural language queries (Genie Space for SQL generation)
+• Custom business logic as AI functions (6 UC Functions for precise lookups)
+• Document intelligence (Knowledge Assistant indexing 4 knowledge documents)
 
 All unified under one governance layer (Unity Catalog).
 
 What's fascinating is that this pattern applies beyond healthcare—anywhere you have analysts as bottlenecks between business users and data.
 
-This is a working proof-of-concept using synthetic data. I've open-sourced the entire project (code, docs, templates) so you can adapt it for your organization.
+This is a working proof-of-concept using synthetic data. I've open-sourced the entire project: code, architecture, 4 ready-to-use knowledge documents (~26 KB), complete setup guides, and deployment templates.
 
 Read the full story and explore the code: [Add link to article]
 
@@ -62,11 +62,11 @@ Potential outcomes:
 • Near-zero compliance calculation errors
 • $8-19M estimated value (varies by organization size)
 
-The technical breakthrough: Combining natural language queries, custom business logic as AI functions, and document intelligence—all governed under Unity Catalog.
+The technical breakthrough: Combining natural language queries (Genie), custom business logic as AI functions (6 UC Functions), and document intelligence (Knowledge Assistant with 4 knowledge documents)—all governed under Unity Catalog.
 
 What makes this repeatable? The pattern works across industries: finance, pharma, retail, telecom—anywhere analysts are bottlenecks.
 
-This is a working demo using synthetic HEDIS data. I've open-sourced the complete project: code, architecture, deployment scripts, and documentation templates.
+This is a working demo using synthetic HEDIS data. I've open-sourced the complete project: code, architecture, 6 UC Functions, 4 ready-to-use knowledge documents (~26 KB), step-by-step setup guides (15-min MCP setup), and deployment templates.
 
 Read the full story: [Add link to article]
 
@@ -91,10 +91,10 @@ Interested in exploring this for your organization? Let's connect.
 - Analysts become query machines, not strategists
 
 **The Solution (3-4 bullet points):**
-- Natural language queries (Genie)
-- Custom business logic (UC Functions)
-- Document intelligence (Knowledge Assistant)
-- Unified governance (Unity Catalog)
+- Natural language queries (Genie Space for SQL generation)
+- Custom business logic (6 UC Functions for member/gap lookups)
+- Document intelligence (Knowledge Assistant with 4 knowledge docs: gap protocols, measure specs, NCQA guidelines, FAQs)
+- Unified governance (Unity Catalog for data + AI + apps)
 
 **The Results (3-4 metrics):**
 - 99% faster (2-5 days → 30 seconds)
@@ -106,6 +106,14 @@ Interested in exploring this for your organization? Let's connect.
 - "Read the full story: [link]"
 - "Code is open source: [github link]"
 - "What challenges does your team face? 👇"
+
+**The Technical Details (Optional - For Technical Audiences):**
+- 6 UC Functions for precise business logic (member lookups, gap analysis, measure calculations)
+- 4 knowledge documents (~26 KB): gap closure protocols, HEDIS measures guide, NCQA guidelines, quality team FAQs
+- 15-minute MCP setup (Genie Space + Knowledge Assistant)
+- Complete setup guides with copy-paste UI fields
+- Medallion architecture (Bronze → Silver → Gold)
+- Model Context Protocol for unified AI agent experience
 
 ---
 
@@ -173,6 +181,32 @@ If posting as a LinkedIn Article (vs. external link):
 
 ---
 
+## 🎁 What Makes This Project Unique
+
+**Production-Ready Components:**
+- ✅ All 4 knowledge documents ready to use (~26 KB total)
+- ✅ Copy-paste UI fields for Genie and Knowledge Assistant setup
+- ✅ 6 production-quality UC Functions with error handling
+- ✅ Complete deployment scripts (Databricks Asset Bundle)
+- ✅ Comprehensive setup guides (15-minute MCP setup)
+- ✅ Real-world scenarios and test queries
+
+**Not Just a Demo:**
+- Industry-specific knowledge content (gap closure, HEDIS specs, NCQA guidelines)
+- Complete Medallion architecture (Bronze → Silver → Gold)
+- Proper error handling and logging
+- Streamlit dashboard with clean UI
+- Service principal permissions automation
+- Volume management for unstructured data
+
+**Easy to Adapt:**
+- Replace HEDIS with your domain (retail, finance, telecom, etc.)
+- Swap knowledge documents with your policies
+- Modify UC Functions for your business logic
+- Keep the same architecture and MCP pattern
+
+---
+
 ## ⏰ When to Post
 
 **Best Times for B2B Tech Content:**
@@ -194,9 +228,11 @@ If posting as a LinkedIn Article (vs. external link):
 - Your GitHub repo: https://github.com/bigdatavik/HEDIS-Quality-Dashboard
 
 **In the Article (Already Included):**
-- GitHub repo with code
-- Documentation (MY_ENVIRONMENT.md)
-- Live dashboard (if public)
+- GitHub repo with code: https://github.com/bigdatavik/HEDIS-Quality-Dashboard
+- Complete documentation: `/MY_ENVIRONMENT.md`
+- Knowledge documents: `/data/knowledge_content/` (4 files, ~26 KB)
+- Setup guides: `/data/setup_guides/` (QUICK_SETUP_GUIDE.md, KNOWLEDGE_ASSISTANT_UI_FIELDS.md, GENIE_INSTRUCTIONS.md)
+- Notebooks: `/notebooks/` (5 notebooks for data pipeline + MCP setup)
 
 ---
 

@@ -1,0 +1,228 @@
+# Quality Team Communications and FAQs
+
+## Frequently Asked Questions
+
+### General HEDIS Questions
+
+**Q: What is HEDIS?**
+A: HEDIS (Healthcare Effectiveness Data and Information Set) is a standardized set of performance measures developed by NCQA. It's used to compare health plan performance on important dimensions of care and service.
+
+**Q: Why do HEDIS measures matter?**
+A: HEDIS measures:
+- Impact Medicare Stars ratings (and bonus payments)
+- Reflect quality of care delivered to members
+- Used by employers to choose health plans
+- Required for NCQA accreditation
+- Publicly reported on Medicare.gov
+
+**Q: How many HEDIS measures are there?**
+A: There are over 90 HEDIS measures across 6 domains:
+1. Effectiveness of Care
+2. Access/Availability of Care
+3. Experience of Care
+4. Utilization
+5. Health Plan Descriptive Information
+6. Measures Reported Using Electronic Clinical Data Systems
+
+Our focus is on the ~15 highest-impact measures for Stars.
+
+**Q: What's the difference between compliance rate and Stars rating?**
+A: 
+- Compliance rate = % of eligible members who received the service (our internal metric)
+- Stars rating = How we compare to other health plans nationally (1-5 stars)
+- A 92% compliance rate typically translates to 4.5-5 stars, depending on national benchmarks
+
+### Gap Closure Questions
+
+**Q: What is a "gap in care"?**
+A: A gap in care means an eligible member has not received a required preventive service during the measurement year. For example, a 55-year-old woman who hasn't had a mammogram in the past 2 years has a BCS gap.
+
+**Q: How often are gaps updated?**
+A: Gaps are refreshed weekly as new claims data is processed. The dashboard always shows the most current gap status as of the last Sunday night refresh.
+
+**Q: Can a gap be closed retroactively?**
+A: Yes! If a member had the service but we didn't receive the claim, once the provider submits the claim (and it processes), the gap will automatically close in our next refresh. We also conduct medical record reviews to capture services not in claims data.
+
+**Q: What's our gap closure rate target?**
+A: Our target is ≥75% gap closure rate. This means if we identify 100 gaps at the start of the year, we aim to close at least 75 of them by year-end.
+
+**Q: What happens if we can't close a gap?**
+A: After exhausting all intervention attempts, we document the reason:
+- Member declined service
+- Unable to reach member
+- Medical contraindication (becomes an exclusion)
+- Member disenrolled
+
+These members remain in our "unable to close" tracking for analysis and improvement planning.
+
+### Dashboard Questions
+
+**Q: How do I use the HEDIS Quality Dashboard?**
+A:
+1. **Overview Tab:** See high-level metrics and trends
+2. **Measure Performance:** Drill into specific measures (BCS, CDC, etc.)
+3. **Gap Analysis:** View open gaps by priority, measure, risk level
+4. **Member Lookup:** Search for individual member gap details
+
+**Q: What does the quality score represent?**
+A: The quality score is an aggregate score (0-100) based on:
+- Weighted average of all measure compliance rates
+- Higher-impact measures weighted more heavily
+- 85 = Good, 90 = Excellent, 92+ = Outstanding
+
+**Q: How often is the dashboard updated?**
+A: Real-time. The dashboard pulls live data from our Unity Catalog tables, which are refreshed weekly (Sunday nights) with the latest claims and enrollment data.
+
+**Q: Can I export data from the dashboard?**
+A: Yes! Most visualizations have an export button. You can download:
+- Summary tables to CSV/Excel
+- Charts as images (PNG)
+- Full data extracts via SQL Warehouse
+
+### Member Outreach Questions
+
+**Q: How do I prioritize which members to contact first?**
+A: Use the priority field in the Gap Analysis tab:
+- **Critical:** High-risk members + triple-weighted measures → Care manager assignment
+- **High:** High-risk OR double-weighted measures → Intensive phone outreach
+- **Medium:** Standard outreach approach
+- **Low:** Automated reminders
+
+**Q: What if a member says they already had the service?**
+A: 
+1. Ask for details (provider name, approximate date)
+2. Document the information
+3. Follow up with the provider to request claim submission
+4. Initiate medical record review if claim not found
+5. Update member's gap status once confirmed
+
+**Q: Can members refuse services?**
+A: Yes. Members have the right to decline preventive services. We document the refusal and note:
+- Date of refusal
+- Reason given (if any)
+- Educational information provided
+- Member acknowledgment
+
+The gap remains open but is flagged as "member declined" so we don't continue outreach.
+
+**Q: What if a member has barriers (transportation, cost, etc.)?**
+A: We offer:
+- Transportation assistance (Uber/Lyft vouchers)
+- Cost education ($0 copay for preventive services)
+- Provider finding assistance
+- Flexible appointment scheduling (evenings/weekends)
+- Language interpretation services
+- Health education materials
+
+Document all barriers in the member's outreach notes so we can address them.
+
+### Provider Engagement Questions
+
+**Q: How do providers receive gap lists?**
+A: We distribute gap lists to providers quarterly via:
+- Secure provider portal
+- Direct email to practice manager
+- EHR integration (for participating providers)
+- Monthly provider scorecard
+
+**Q: Do providers get paid for closing gaps?**
+A: Many providers have quality incentive contracts that include HEDIS performance bonuses. Check with Provider Network team for specific contract terms.
+
+**Q: What if a provider says the service was completed but we show a gap?**
+A: Common reasons:
+1. Claim not yet processed (7-30 day lag)
+2. Claim rejected/denied (billing error)
+3. Wrong diagnosis/procedure code used
+4. Service done out of network (we may not have visibility)
+
+Solution: Request medical records for verification.
+
+### Reporting Questions
+
+**Q: When is HEDIS data reported to NCQA?**
+A: Annually by June 30th for the prior calendar year. For example, 2024 measurement year data is reported by June 30, 2025.
+
+**Q: What happens during a HEDIS audit?**
+A: NCQA audits our HEDIS submission annually:
+1. Reviews our processes and documentation
+2. Validates a sample of medical records
+3. Tests our data systems
+4. Issues audit findings and certification
+
+We must maintain ≥95% accuracy to pass.
+
+**Q: Where can I see our performance vs. national benchmarks?**
+A: In the dashboard "Measure Performance" tab, click "Show Benchmarks" to see:
+- Our current rate
+- National 50th percentile (average)
+- National 75th percentile (above average)
+- National 90th percentile (top performers)
+
+### System/Technical Questions
+
+**Q: Why is my data not showing up?**
+A: Check:
+1. Date range filter (top of dashboard)
+2. Measure filter (may be filtered to specific measures)
+3. Member population filter (active members only by default)
+4. Data refresh date (bottom of page)
+
+If still not appearing, contact IT support.
+
+**Q: Can I create custom reports?**
+A: Yes! The dashboard is built on our Unity Catalog data. You can:
+1. Use the SQL Warehouse to write custom queries
+2. Connect Power BI/Tableau to our tables
+3. Request report development from Analytics team
+
+**Q: Who has access to the HEDIS dashboard?**
+A: Access is role-based:
+- **Quality Team:** Full access (all members, all data)
+- **Care Managers:** Access to assigned members only
+- **Providers:** Access to their attributed members only
+- **Executives:** Summary/aggregate views only
+
+## Contact Information
+
+**Quality Department:**
+- Email: quality@healthplan.com
+- Phone: (555) 123-4567
+- Hours: Monday-Friday 8am-5pm
+
+**Technical Support:**
+- Email: itsupport@healthplan.com
+- Phone: (555) 234-5678
+- Hours: 24/7 for critical issues
+
+**Provider Services:**
+- Email: providerservices@healthplan.com
+- Phone: (555) 345-6789
+- Hours: Monday-Friday 8am-6pm
+
+## Quick Reference: Measure Codes
+
+| Code | Measure Name | Eligible Population |
+|------|--------------|---------------------|
+| BCS | Breast Cancer Screening | Women 50-74 |
+| CDC | Comprehensive Diabetes Care | Adults 18-75 with diabetes |
+| CBP | Controlling High Blood Pressure | Adults 18-85 with hypertension |
+| COL | Colorectal Cancer Screening | Adults 50-75 |
+| CIS | Childhood Immunization Status | Children age 2 |
+| W15 | Well-Child Visits (First 15 Months) | Children <15 months |
+| AWC | Adolescent Well-Care Visits | Adolescents 12-21 |
+| PPC | Prenatal and Postpartum Care | Women with deliveries |
+
+## Resources
+
+- **HEDIS Specifications:** S:\Quality\HEDIS\Technical_Specs
+- **Training Materials:** Learning Management System (LMS)
+- **Provider Gap Lists:** Provider Portal
+- **Member Outreach Scripts:** S:\Quality\Outreach\Scripts
+- **Weekly Gap Reports:** Emailed every Monday morning
+
+## Stay Informed
+
+- **Weekly Quality Newsletter:** Sent every Monday
+- **Monthly Quality Team Meeting:** First Tuesday, 10am
+- **Quarterly Provider Collaboration:** Third Wednesday
+- **Annual HEDIS Training:** October (for next measurement year)

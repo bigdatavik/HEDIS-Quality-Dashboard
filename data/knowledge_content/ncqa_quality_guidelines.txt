@@ -1,0 +1,177 @@
+# NCQA Quality Guidelines for HEDIS Measures
+
+## National Committee for Quality Assurance (NCQA)
+
+NCQA is a private, non-profit organization dedicated to improving health care quality through measurement, transparency, and accountability.
+
+## HEDIS Compliance Requirements
+
+### Data Collection Methods
+
+1. **Administrative Data (Claims)**
+   - Preferred method
+   - CPT/ICD codes submitted by providers
+   - Pharmacy claims for medication adherence
+   - Most cost-effective approach
+
+2. **Medical Record Review (MRR)**
+   - Used when administrative data insufficient
+   - Manual chart review by trained abstractors
+   - Supplemental to administrative data
+   - More expensive but captures missing services
+
+3. **Electronic Health Records (EHR)**
+   - Direct integration with provider systems
+   - Real-time data capture
+   - Reduces lag time in reporting
+
+### Continuous Enrollment Requirements
+
+Members must be continuously enrolled during the measurement year to be included in the denominator.
+
+**Allowable Gaps:**
+- One gap up to 45 days during measurement year
+- No gap during required lookback periods
+
+**Exclusions:**
+- Hospice enrollment
+- Institutionalized members (for some measures)
+- Medical reasons documented in chart
+
+### Measurement Year vs. Reporting Year
+
+- **Measurement Year:** Calendar year during which services occur (e.g., 2024)
+- **Reporting Year:** Year when data is reported to NCQA (e.g., 2025)
+- **Lag Time:** Typically 3-6 months for claims runout
+
+### Audit Requirements
+
+All HEDIS submissions are subject to NCQA audit:
+
+1. **Annual Compliance Audit**
+   - Validates data collection processes
+   - Reviews medical records for accuracy
+   - Confirms technical specifications followed
+
+2. **Pass/Fail Criteria**
+   - Must achieve ≥ 95% measure-level reportability
+   - Bias must not exceed ±5 percentage points
+   - Systems must meet NCQA standards
+
+3. **Audit Preparation**
+   - Document all processes
+   - Train staff on specifications
+   - Conduct internal pre-audits
+   - Maintain audit trail
+
+## Quality Improvement Strategies
+
+### Population Health Management
+
+1. **Risk Stratification**
+   - Identify high-risk, high-gap members
+   - Allocate resources to highest impact opportunities
+   - Use predictive modeling for targeting
+
+2. **Care Coordination**
+   - Assign care managers to high-risk members
+   - Coordinate between PCPs and specialists
+   - Address social determinants of health
+   - Medication therapy management
+
+3. **Provider Partnerships**
+   - Share quality dashboards with providers
+   - Offer gap closure incentives
+   - Provide EHR alerts at point of care
+   - Collaborative quality improvement teams
+
+### Member Engagement
+
+1. **Outreach Campaigns**
+   - Targeted mailings and phone calls
+   - Culturally appropriate materials
+   - Language translation services
+   - Mobile health reminders
+
+2. **Barriers Removal**
+   - Transportation assistance
+   - Extended clinic hours
+   - Telehealth options
+   - Reduced or waived copays
+
+3. **Health Education**
+   - Explain importance of preventive care
+   - Share personalized health information
+   - Wellness program incentives
+   - Health literacy improvements
+
+## Stars Rating Impact
+
+### CMS Stars Methodology
+
+HEDIS measures comprise approximately 60% of the Medicare Stars rating.
+
+**Stars Distribution:**
+- 5 Stars: 1 in 10 plans
+- 4+ Stars: Quality bonus payments
+- 3 Stars or below: Risk of CMS sanctions
+
+**Financial Impact:**
+- 5-Star plans: +5% premium bonus
+- 4-Star plans: +3% premium bonus
+- Higher member retention and enrollment
+
+### High-Impact HEDIS Measures for Stars
+
+1. **Diabetes Care (CDC)** - Triple-weighted
+2. **Controlling High Blood Pressure (CBP)** - Triple-weighted
+3. **Breast Cancer Screening (BCS)** - Double-weighted
+4. **Colorectal Cancer Screening (COL)** - Double-weighted
+
+**Strategy:** Prioritize triple- and double-weighted measures for maximum Stars impact.
+
+## Compliance Best Practices
+
+1. **Early Gap Identification**
+   - Identify gaps by Q2 for intervention time
+   - Use predictive analytics to forecast gaps
+   - Monitor real-time vs. waiting for year-end
+
+2. **Continuous Monitoring**
+   - Weekly performance dashboards
+   - Monthly provider scorecards
+   - Quarterly trend analysis
+   - Annual HEDIS reporting
+
+3. **Cross-Functional Collaboration**
+   - Clinical teams
+   - Operations/IT
+   - Provider network
+   - Member services
+   - Quality department
+
+4. **Technology Enablement**
+   - Automated gap identification
+   - Member outreach tracking
+   - EHR integration
+   - Reporting automation
+
+5. **Documentation Excellence**
+   - Complete medical coding
+   - Accurate diagnosis capture
+   - Timely claims submission
+   - Medical record completeness
+
+## Common Pitfalls to Avoid
+
+1. **Late Gap Identification** - Start outreach early in the year
+2. **Incomplete Claims Data** - Work with providers on timely submission
+3. **Poor Documentation** - Train providers on coding requirements
+4. **Inadequate Follow-Up** - Multiple touch points increase success
+5. **Lack of Member Engagement** - Use incentives and education
+
+## Resources
+
+- NCQA HEDIS Technical Specifications: www.ncqa.org/hedis
+- CMS Stars Methodology: www.cms.gov/medicare/quality/stars
+- Quality Compass Benchmarks: Available to NCQA members

@@ -1,24 +1,24 @@
 From Compliance Burden to Strategic Asset: An Art of the Possible for Healthcare Quality Teams
 
-What if you could turn 45 data extractors into strategic analysts—in just 2 weeks?
+What if your data analysts could focus on strategic analysis instead of data extraction—in just 2 weeks?
 
 ==========================================
 
-📌 Note: This is a demonstration using synthetic data to showcase what's possible with Databricks Intelligence Platform and Model Context Protocol. The scenarios, metrics, and use cases are based on typical healthcare payor challenges. All code and architecture are production-ready and available on GitHub.
+📌 Note: This is a demonstration using synthetic data to showcase what's possible with Databricks Intelligence Platform and Model Context Protocol. The scenarios, metrics, and use cases are based on typical healthcare payer challenges. All code, architecture, knowledge documents, and setup guides are production-ready and available on GitHub.
 
 ==========================================
 
 The $20 Million Question
 
-Imagine you're a VP of Quality Analytics at a Medicare Advantage health plan covering 2 million members. Another urgent request lands in your inbox from care management:
+Meet Sarah. She is the VP of Quality Analytics at a Medicare Advantage health plan covering 2 million members. Another urgent request lands in her inbox from care management:
 
 "Which diabetic members over 65 have open gaps in eye exams and haven't been seen in 6 months?"
 
-It's Monday morning. The question is simple. The answer is critical—finding these members quickly could prevent blindness, improve Star Ratings, and unlock millions in quality bonuses. But you know what comes next.
+It's Monday morning. The question is simple. The answer is critical—finding these members quickly could prevent blindness, improve Star Ratings, and unlock millions in quality bonuses. But Sarah knows what comes next.
 
-Your analyst team will spend 2-5 days crafting SQL queries, joining tables, waiting for IT approval, and manually exporting to Excel. By Friday, you'll have an answer—but the care team will have moved on to the next crisis.
+Her analyst team will spend 2-5 days crafting SQL queries, joining tables, waiting for IT approval, and manually exporting to Excel. By Friday, they'll have an answer—but the care team will have moved on to the next crisis.
 
-This isn't an exception. It's the daily reality at most healthcare payors.
+This isn't an exception. It's the daily reality at most healthcare payers.
 
 And it's costing organizations an estimated $15-20 million per year in lost opportunities.
 
@@ -28,13 +28,13 @@ What if there was a better way?
 
 The Compliance Trap
 
-Healthcare payors live and die by HEDIS quality measures—the compliance metrics that determine Star Ratings from CMS (Centers for Medicare & Medicaid Services). The stakes are existential:
+Healthcare payers live and die by HEDIS quality measures—the compliance metrics that determine Star Ratings from CMS (Centers for Medicare & Medicaid Services). The stakes are existential:
 
 • Improve from 3.5 to 4.0 stars? Unlock $15-20M in annual quality bonuses
 • Drop below 3.0 stars? Risk losing Medicare contracts entirely
 • Miss a gap closure opportunity? Watch members suffer preventable complications
 
-Yet typical quality analytics teams—often 40-50 analysts at mid-sized payors—spend most of their time extracting data rather than finding these opportunities.
+Yet typical quality analytics teams—often 40-50 highly skilled, expensive analysts at mid-sized payers—spend most of their time on data extraction, consolidation, and reconciliation rather than actual analysis. These high-value business professionals are stuck doing manual data work instead of strategic analysis.
 
 The Numbers Tell the Story:
 
@@ -47,7 +47,7 @@ Total money left on the table: $18-23M per year
 
 And the problem gets worse. Every year, NCQA publishes updated measure specifications—500+ pages of dense policy documents. Analysts manually search PDFs for exclusion criteria, leading to inconsistent interpretations and compliance errors.
 
-Analysts aren't lazy. They're brilliant healthcare professionals trapped in a system that turns them into query machines.
+Sarah's team isn't lazy or unskilled. They're brilliant healthcare analysts—highly educated, expensive talent—trapped in a system that forces them to spend their days on data extraction, consolidation, and reconciliation instead of the strategic analysis they were hired to do.
 
 ==========================================
 
@@ -141,17 +141,23 @@ When someone asks Genie: "What's our compliance rate for diabetes care?"
 
 The AI automatically calls calculate_compliance_rate('CDC', 2025) using the organization's official calculation logic. No Excel formulas. No room for interpretation. One version of the truth.
 
-Potential Impact: Eliminate compliance calculation errors (typically 5-7 per month at large payors)
+Potential Impact: Eliminate compliance calculation errors (typically 5-7 per month at large payers)
 
 3. Knowledge Assistant: Policy Intelligence
 
-The demo includes all NCQA measure specifications, exclusion criteria, and sample policies uploaded to a Unity Catalog Volume. Databricks' Knowledge Assistant creates a RAG (Retrieval-Augmented Generation) system over these documents.
+The demo includes four key knowledge documents (~26 KB total) uploaded to Unity Catalog Volume:
+• Gap closure protocols and standard operating procedures
+• HEDIS measure specifications and definitions
+• NCQA compliance requirements and guidelines  
+• Quality team FAQs and communications
+
+Databricks' Knowledge Assistant creates a RAG (Retrieval-Augmented Generation) system over these documents.
 
 Instead of Ctrl+F through PDFs, analysts could ask:
 
-Query: "What are the exclusion criteria for Breast Cancer Screening in 2025?"
+Query: "What are the exclusion criteria for Breast Cancer Screening?"
 
-Response: "Members with bilateral mastectomy are excluded from BCS measure. See HEDIS Technical Specifications Vol 2, page 87. Additionally, members in hospice care are excluded per CMS guidance..."
+Response: "Members with bilateral mastectomy are excluded from BCS measure. Additionally, members in hospice care are excluded per NCQA guidelines. BCS targets women aged 50-74 with mammogram within 24 months..."
 
 Complete with citations to the source documents.
 
@@ -181,7 +187,7 @@ Time from code to production: ~5 minutes
 
 The Projected Impact: What Organizations Could Achieve
 
-Based on typical healthcare payor metrics, here's the potential transformation:
+Based on typical healthcare payer metrics, here's the potential transformation:
 
 Operational Impact Projections:
 
@@ -212,7 +218,7 @@ What This Could Mean for Your Team
 
 The numbers tell part of the story, but the human impact could be even more significant.
 
-Current Reality: Analysts are query machines, burned out from repetitive SQL requests.
+Current Reality: Highly skilled analysts spend 80% of their time on data extraction, consolidation, and reconciliation rather than strategic analysis. Expensive talent stuck doing manual, repetitive work.
 
 Art of the Possible: Analysts become strategic advisors:
 • Building machine learning models to predict which members are most likely to close gaps
@@ -221,7 +227,7 @@ Art of the Possible: Analysts become strategic advisors:
 
 Imagine your senior analyst saying:
 
-"Instead of writing 30 SQL queries a week, I'm building predictive models that help us intervene before gaps even open. I feel like an analyst again, not a report factory."
+"I spent years getting my master's degree to become a data analyst, but I was spending 80% of my time extracting data, consolidating spreadsheets, and reconciling numbers. Now I'm finally doing what I was hired to do—building predictive models that help us intervene before gaps even open. I'm doing strategic analysis again, not just manual data work."
 
 Imagine your care managers saying:
 
@@ -285,25 +291,43 @@ Step 2: Customize for Your Use Case
 • Replace HEDIS measures with your domain (retail, finance, etc.)
 • Update config.py with your catalog/schema names
 • Modify UC Functions for your business logic
-• Upload your policy documents to Knowledge Assistant
+• Customize knowledge documents in data/knowledge_content/ for your policies
 
-Step 3: Deploy to Your Workspace
+Step 3: Deploy Data Pipeline & Dashboard
 # Update databricks.yml with your workspace URL
-# Then deploy everything (jobs, apps, notebooks)
+# Deploy everything (notebooks, jobs, dashboard)
 databricks bundle deploy --target prod
 
-Step 4: Configure MCP Components
-1. Create Genie Space in Databricks workspace
-2. Upload UC Functions using the provided notebook
-3. Create Knowledge Assistant endpoint and upload documents
-4. Update app.yaml with your Genie/Knowledge Assistant IDs
+# Run all data processing jobs
+databricks bundle run bronze_ingestion_job
+databricks bundle run silver_transformation_job
+databricks bundle run gold_aggregation_job
+databricks bundle run uc_functions_job
+
+# Upload knowledge documents
+databricks bundle run knowledge_docs_job
+
+# Deploy dashboard app
+databricks bundle run hedis_quality_dashboard_app
+
+Step 4: Configure MCP Components (~15 minutes)
+1. Create Genie Space: Follow data/setup_guides/GENIE_INSTRUCTIONS.md (5 min)
+2. Create Knowledge Assistant: Follow data/setup_guides/KNOWLEDGE_ASSISTANT_UI_FIELDS.md (10 min)
+3. Grant permissions: Run scripts provided in the guides
+4. Test each component separately before integration
+
+Step 5: Add MCP Integration
+Tell the AI agent: "Add MCP to my project"
+Provide your Genie Space ID and Knowledge Assistant Endpoint ID
+The agent will update config, redeploy, and provide workspace URL
 
 Total time: 1-2 days (assuming you have existing data)
 
 Resources:
 • Full code & documentation: github.com/bigdatavik/HEDIS-Quality-Dashboard
-• Environment guide: See MY_ENVIRONMENT.md for bulletproof setup instructions
-• Knowledge docs templates: See data/ folder for document examples
+• Knowledge docs templates: data/knowledge_content/ folder (4 ready-to-use examples)
+• Setup guides: data/setup_guides/ folder (complete step-by-step instructions)
+• Quick start: data/setup_guides/QUICK_SETUP_GUIDE.md
 
 ==========================================
 
@@ -343,7 +367,6 @@ I'd love to hear your thoughts or discuss how this pattern might apply to your u
 
 Want to explore the code? The entire project is open and ready to customize:
 • Repo: github.com/bigdatavik/HEDIS-Quality-Dashboard
-• Docs: See MY_ENVIRONMENT.md for complete setup guide
 
 ==========================================
 
@@ -359,23 +382,7 @@ What will your team build?
 
 ==========================================
 
-About the Author
-
-Vik Malhotra is a Solutions Architect at Databricks, specializing in healthcare analytics and AI-powered data platforms. He partners with organizations to transform their data teams from reactive report factories to proactive strategic advisors. Previously, he built analytics platforms for Fortune 500 healthcare payors and has deep expertise in HEDIS quality measures, claims analytics, and regulatory compliance.
-
-I share open-source projects and write about data engineering, AI platforms, and healthcare analytics. Connect on LinkedIn or explore my GitHub projects.
-
-==========================================
-
 #Healthcare #DataAnalytics #ArtificialIntelligence #Databricks #HEDIS #QualityMeasures #DataPlatform #BusinessIntelligence #MLOps #DigitalTransformation
-
-==========================================
-
-📊 Live Demo: https://hedis-quality-dashboard-984752964297111.11.azure.databricksapps.com
-
-💻 Source Code: github.com/bigdatavik/HEDIS-Quality-Dashboard
-
-📚 Documentation: See MY_ENVIRONMENT.md in the repo for complete implementation guide
 
 ==========================================
 

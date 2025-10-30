@@ -1,0 +1,240 @@
+# Gap Closure Protocols and Standard Operating Procedures
+
+## Gap Closure Workflow
+
+### Phase 1: Gap Identification (January-March)
+
+**Step 1: Data Extraction**
+- Extract eligible member population from enrollment system
+- Identify measures applicable to each member based on age/gender/conditions
+- Pull claims data for services received in prior year
+- Flag members with missing services (gaps)
+
+**Step 2: Gap Validation**
+- Remove false positives (services not captured in claims)
+- Apply exclusions (hospice, institutionalized, medical contraindications)
+- Verify continuous enrollment criteria met
+- Confirm member still active
+
+**Step 3: Gap Prioritization**
+- Calculate Stars impact score for each gap
+- Assign priority level (High/Medium/Low)
+- Consider member risk level
+- Generate gap closure lists by intervention type
+
+**Priority Matrix:**
+
+| Risk Level | Measure Weight | Priority | Intervention |
+|------------|---------------|----------|--------------|
+| High       | Triple        | Critical | Care Manager |
+| High       | Double/Single | High     | Care Manager |
+| Medium     | Triple/Double | High     | Phone Outreach |
+| Medium     | Single        | Medium   | Phone/Letter |
+| Low        | Any           | Low      | Automated |
+
+### Phase 2: Intervention (April-October)
+
+**Critical Priority (Care Management)**
+- Assign dedicated care manager
+- Weekly member contact attempts
+- Coordinate with PCP for appointments
+- Arrange transportation if needed
+- Follow up until gap closed or exhausted efforts
+- Maximum 10 contact attempts
+
+**High Priority (Intensive Outreach)**
+- Phone call by quality nurse
+- Follow-up call in 2 weeks if no response
+- Letter sent after 2 failed call attempts
+- Portal message (if member uses portal)
+- Provider notification
+- Maximum 5 contact attempts
+
+**Medium Priority (Standard Outreach)**
+- Initial phone call by health coach
+- Follow-up letter after 2 weeks
+- Portal message
+- Maximum 3 contact attempts
+
+**Low Priority (Automated)**
+- Automated phone message
+- Email or text reminder (if opted in)
+- Mailed postcard
+- Maximum 2 contact attempts
+
+### Phase 3: Tracking and Validation (Ongoing)
+
+**Weekly Monitoring**
+- Pull updated claims data
+- Identify newly closed gaps
+- Update member gap status
+- Generate intervention reports
+- Adjust outreach strategy based on results
+
+**Quality Validation**
+- Verify service codes match measure requirements
+- Confirm dates of service within measurement year
+- Check for documentation of exclusions
+- Flag any questionable claims for review
+
+**Performance Metrics**
+- Gap closure rate by measure
+- Gap closure rate by intervention type
+- Average time to close gap
+- Cost per gap closed
+- Return on investment
+
+## Standard Phone Call Script
+
+**Opening:**
+"Hi [Member Name], this is [Caller Name] from [Health Plan] Quality Department. I'm calling about your preventive health care. Do you have a few minutes to talk?"
+
+**Gap Explanation:**
+"Our records show you're due for [Measure Name], which is [brief description]. This is an important preventive service that [benefit explanation]."
+
+**Action Request:**
+"Have you had this done recently? If so, we may not have received the claim yet. If not, I'd like to help you get it scheduled."
+
+**Barrier Assessment:**
+"Is there anything preventing you from getting this done? I can help with:"
+- Finding a provider
+- Scheduling an appointment
+- Arranging transportation
+- Understanding costs (usually $0 with insurance)
+
+**Close:**
+"I'll follow up with you in [timeframe] to see how it went. You can also call us at [number] if you have questions. Thank you for taking care of your health!"
+
+**Documentation:**
+- Call outcome (Reached/Left Message/Wrong Number/Declined)
+- Member response and barriers identified
+- Action taken (appointment scheduled, provider referral, etc.)
+- Next follow-up date
+
+## Medical Record Review Process
+
+When administrative data is insufficient:
+
+**Step 1: Provider Outreach**
+- Request medical records for specific members
+- Provide date range needed
+- Explain measure requirements
+- Offer secure upload portal
+
+**Step 2: Chart Abstraction**
+- Trained abstractor reviews chart
+- Looks for service documentation
+- Records findings in standardized format
+- Flags unclear documentation
+
+**Step 3: Validation**
+- Second abstractor reviews sample
+- Inter-rater reliability must be ≥95%
+- Supervisor reviews all positive findings
+
+**Step 4: Data Entry**
+- Enter findings into HEDIS system
+- Link to source documentation
+- Apply to numerator if criteria met
+
+## Gap Closure Incentives
+
+### Member Incentives
+- Gift card for completing preventive visit ($25-50)
+- Health savings account credit
+- Reduced premium (where allowed)
+- Wellness program points
+- Prize drawings
+
+### Provider Incentives
+- Quality bonuses tied to HEDIS performance
+- Per-gap-closed payment ($50-100)
+- Public recognition (top performers)
+- Reduced administrative burden
+- Data sharing and support
+
+## Common Barriers and Solutions
+
+| Barrier | Solution |
+|---------|----------|
+| Transportation | Arrange Uber/Lyft or taxi voucher |
+| Cost concern | Explain $0 copay for preventive services |
+| No PCP | Help find and schedule with in-network PCP |
+| Language | Provide interpreter or translated materials |
+| Health literacy | Use simple terms, pictures, examples |
+| Distrust | Explain benefits, share testimonials |
+| Too busy | Offer weekend/evening appointments |
+| Forgot | Set up appointment reminders |
+
+## Technology Tools
+
+### Gap Identification
+- SQL queries against claims database
+- Natural language processing of medical records
+- Predictive modeling for risk stratification
+
+### Member Outreach
+- Automated dialer for phone campaigns
+- Email/SMS messaging platforms
+- Member portal alerts
+- Interactive voice response (IVR)
+
+### Tracking and Reporting
+- Gap closure dashboards (Power BI/Tableau)
+- Provider scorecards
+- Real-time performance monitoring
+- Automated weekly reports
+
+### EHR Integration
+- Bi-directional data exchange (HL7/FHIR)
+- Point-of-care gap alerts
+- Quality measure documentation templates
+- Batch claims submission
+
+## Success Metrics
+
+### Process Metrics
+- % members reached by outreach attempts
+- Average time from gap ID to first outreach
+- % gaps assigned to intervention within 30 days
+- % providers receiving gap lists quarterly
+
+### Outcome Metrics
+- Overall gap closure rate (Target: ≥75%)
+- Gap closure rate by intervention type
+- Gap closure rate by measure
+- Year-over-year compliance rate improvement
+
+### Financial Metrics
+- Cost per gap closed
+- ROI on gap closure programs
+- Stars bonus payment increase
+- Member retention improvement
+
+## Annual Timeline
+
+- **January:** Gap identification and validation
+- **February:** Intervention planning and resource allocation
+- **March-April:** High-priority outreach begins
+- **May-August:** Peak intervention period
+- **September-October:** Final push for remaining gaps
+- **November-December:** Claims runout and final validation
+- **Year-end:** HEDIS reporting to NCQA
+
+## Continuous Improvement
+
+1. **Monthly Review**
+   - Analyze what's working vs. not working
+   - Adjust intervention strategies
+   - Reallocate resources to highest ROI activities
+
+2. **Quarterly Deep Dive**
+   - Compare to prior year same quarter
+   - Benchmark against national averages
+   - Identify new opportunities
+
+3. **Annual Strategic Planning**
+   - Set next year's goals
+   - Budget for gap closure programs
+   - Plan provider engagement
+   - Enhance technology capabilities

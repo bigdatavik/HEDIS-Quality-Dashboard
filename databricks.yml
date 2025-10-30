@@ -55,7 +55,7 @@ resources:
 
   apps:
     hedis_quality_dashboard_app:
-      name: 'hedis-quality-dashboard'
+      name: 'hedis-dashboard-vik'
       description: 'HEDIS Quality Measures Dashboard - NCQA compliance tracking for quality team'
       source_code_path: ./dashboard
 

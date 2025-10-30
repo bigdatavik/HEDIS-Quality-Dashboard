@@ -1,0 +1,137 @@
+# HEDIS Quality Measures Reference Guide
+
+## Overview
+Healthcare Effectiveness Data and Information Set (HEDIS) is a comprehensive set of standardized performance measures designed to provide purchasers and consumers with the information they need to reliably compare the performance of health care plans.
+
+## Key HEDIS Measures
+
+### BCS - Breast Cancer Screening
+**Description:** Percentage of women aged 50-74 who had a mammogram to screen for breast cancer.
+
+**Eligibility:** Women aged 50-74
+**Compliance Criteria:** Mammogram within the past 24 months
+**NCQA Target:** ≥ 70%
+**Current Performance:** 92%
+
+**Why It Matters:**
+- Early detection saves lives
+- Significantly improves treatment outcomes
+- Reduces mortality by 25-30%
+
+### CDC - Comprehensive Diabetes Care
+**Description:** Percentage of members 18-75 with diabetes (type 1 and type 2) who received key preventive services.
+
+**Eligibility:** Members 18-75 with diabetes diagnosis
+**Compliance Criteria:**
+- HbA1c testing (annual)
+- Eye exam (retinal) performed
+- Medical attention for nephropathy
+- BP control (<140/90)
+
+**NCQA Target:** ≥ 65%
+**Current Performance:** 89%
+
+**Why It Matters:**
+- Prevents complications (blindness, kidney failure, amputation)
+- Reduces hospitalizations
+- Improves member quality of life
+
+### CBP - Controlling High Blood Pressure
+**Description:** Percentage of members 18-85 with hypertension whose BP was adequately controlled.
+
+**Eligibility:** Members 18-85 with hypertension diagnosis
+**Compliance Criteria:** BP < 140/90 mmHg
+**NCQA Target:** ≥ 60%
+**Current Performance:** 88%
+
+**Why It Matters:**
+- #1 controllable risk factor for heart attack and stroke
+- Reduces cardiovascular events by 25%
+- Cost-effective intervention
+
+### COL - Colorectal Cancer Screening
+**Description:** Percentage of members 50-75 who had appropriate screening for colorectal cancer.
+
+**Eligibility:** Members aged 50-75
+**Compliance Criteria:**
+- Fecal occult blood test (annual), OR
+- Flexible sigmoidoscopy (every 5 years), OR
+- Colonoscopy (every 10 years)
+
+**NCQA Target:** ≥ 65%
+**Current Performance:** 85%
+
+### CIS - Childhood Immunization Status
+**Description:** Percentage of children 2 years of age who had four DTP/DTaP, three polio, one MMR, three H influenza type B, three hepatitis B, one chicken pox vaccine, and four pneumococcal conjugate vaccines by their second birthday.
+
+**Eligibility:** Children age 2
+**NCQA Target:** ≥ 75%
+**Current Performance:** 90%
+
+### W15 - Well-Child Visits (First 15 Months)
+**Description:** Percentage of children who had six or more well-child visits with a PCP during their first 15 months of life.
+
+**Eligibility:** Children in first 15 months
+**NCQA Target:** ≥ 65%
+**Current Performance:** 88%
+
+### AWC - Adolescent Well-Care Visits
+**Description:** Percentage of adolescents 12-21 who had at least one comprehensive well-care visit with a PCP or OB/GYN during the measurement year.
+
+**Eligibility:** Adolescents 12-21
+**NCQA Target:** ≥ 55%
+**Current Performance:** 79%
+
+### PPC - Prenatal and Postpartum Care
+**Description:** Percentage of deliveries that received prenatal and postpartum care.
+
+**Eligibility:** Women who delivered a live birth
+**Compliance Criteria:**
+- Prenatal visit in first trimester or within 42 days of enrollment
+- Postpartum visit 7-84 days after delivery
+
+**NCQA Target:** ≥ 75%
+**Current Performance:** 87%
+
+## Stars Ratings
+
+HEDIS measures are a key component of Medicare Stars ratings:
+
+- **5 Stars:** Top performance (90th percentile+)
+- **4 Stars:** Above average (75th-89th percentile)
+- **3 Stars:** Average (50th-74th percentile)
+- **2 Stars:** Below average (25th-49th percentile)
+- **1 Star:** Low performance (<25th percentile)
+
+**Current Overall Rating:** 4.5 Stars (92nd percentile)
+
+## Gap Closure Best Practices
+
+1. **Prioritize High-Impact Measures**
+   - Focus on measures with largest scoring impact
+   - Target BCS, CDC, CBP first
+
+2. **Risk Stratification**
+   - High-risk members get intensive outreach
+   - Medium-risk get standard outreach
+   - Low-risk get automated reminders
+
+3. **Multi-Channel Outreach**
+   - Phone calls (highest success rate)
+   - Text messages (good for younger members)
+   - Portal messages
+   - Postal mail (for hard-to-reach)
+
+4. **Provider Engagement**
+   - Share gap lists with providers
+   - Offer point-of-care reminders
+   - Provide incentives for gap closure
+
+5. **Track and Measure**
+   - Monitor gap closure rates weekly
+   - Analyze which interventions work
+   - Adjust strategy based on data
+
+## Quality Improvement Target
+**Goal:** Achieve and maintain 92%+ compliance rate across all measures
+**Benefit:** Increased Stars rating → Higher member satisfaction and revenue
