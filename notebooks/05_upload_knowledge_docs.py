@@ -60,12 +60,18 @@ create_volume_if_not_exists(spark, CATALOG, SCHEMA, VOLUME)
 # Volume path
 volume_path = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}"
 
-# List of knowledge files to upload
+# List of knowledge files to upload (all 8 documents)
 knowledge_files = [
+    # Original 4 documents
     "gap_closure_protocols.txt",
     "hedis_measures_guide.txt",
     "ncqa_quality_guidelines.txt",
-    "quality_team_communications.txt"
+    "quality_team_communications.txt",
+    # New 4 documents (SDOH + ROI enhancement)
+    "cms_health_equity_guidelines.txt",
+    "value_based_care_best_practices.txt",
+    "social_needs_screening.txt",
+    "roi_calculation_methods.txt"
 ]
 
 print(f"📤 Uploading knowledge documents to: {volume_path}\n")

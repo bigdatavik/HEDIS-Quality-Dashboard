@@ -1,0 +1,331 @@
+SOCIAL NEEDS SCREENING PROTOCOLS
+Implementation Guide for Medicare Advantage Plans
+
+==================================================
+OVERVIEW
+==================================================
+
+Social Needs Screening: Systematic assessment of members' non-medical barriers to health (food, housing, transportation, safety, utilities).
+
+Why It Matters:
+- CMS requirement for MA plans (2024+)
+- Star Ratings measure (Screening for Social Needs)
+- Drives disparity reduction
+- Improves health outcomes and lowers costs
+
+==================================================
+VALIDATED SCREENING TOOLS
+==================================================
+
+1. PRAPARE (Protocol for Responding to and Assessing Patients' Assets, Risks, and Experiences)
+   - 21 questions covering 7 domains
+   - Used by FQHCs nationally
+   - Available in 20+ languages
+
+2. AHC-HRSN (Accountable Health Communities Health-Related Social Needs)
+   - 10-question screener
+   - CMS-tested in AHC Model
+   - Focus on 5 core domains
+
+3. CMS Standardized Screening Tool
+   - 5 questions (food, housing, transport, utilities, safety)
+   - Minimum for Star Ratings reporting
+   - Quick administration (2-3 minutes)
+
+==================================================
+CORE SCREENING DOMAINS
+==================================================
+
+1. Food Insecurity
+   Question: "Within the past 12 months, did you worry that your food would run out before you got money to buy more?"
+   Follow-up: Frequency, current status
+
+2. Housing Instability
+   Question: "Are you worried about losing your housing?"
+   Follow-up: Current living situation, eviction risk
+
+3. Transportation Barriers
+   Question: "In the past 12 months, has lack of transportation kept you from medical appointments, meetings, work, or getting things needed for daily living?"
+   Follow-up: Specific barriers (no car, no public transit, cost)
+
+4. Utility Assistance Needs
+   Question: "In the past 12 months, has the electric, gas, oil, or water company threatened to shut off services?"
+   Follow-up: Current status, payment plan
+
+5. Interpersonal Safety
+   Question: "Do you feel physically and emotionally safe where you currently live?"
+   Follow-up: Intimate partner violence screening if indicated
+
+==================================================
+IMPLEMENTATION WORKFLOW
+==================================================
+
+Step 1: Identify Screening Opportunities
+- Annual Wellness Visit (AWV)
+- Health Risk Assessment (HRA)
+- Post-discharge follow-up calls
+- New member welcome calls
+- Chronic disease management encounters
+
+Step 2: Administer Screen
+- Trained staff (nurse, social worker, CHW)
+- Private setting (HIPAA compliant)
+- Trauma-informed approach
+- Member's preferred language
+
+Step 3: Document Results
+- Record in EHR with structured data fields
+- Flag member chart for positive screens
+- Report to care team
+
+Step 4: Develop Intervention Plan
+- For each positive screen: Specific intervention
+- Timeline for resolution
+- Assign responsible party
+
+Step 5: Connect to Resources
+- Make warm hand-off to community partner
+- Provide written list of resources
+- Schedule follow-up to confirm connection
+
+Step 6: Track Outcomes
+- Did member connect to resource?
+- Was need resolved?
+- Time to resolution
+
+==================================================
+INTERVENTION STRATEGIES BY DOMAIN
+==================================================
+
+Food Insecurity:
+- SNAP application assistance
+- Food pantry referrals (United Way 211)
+- Meals on Wheels for homebound
+- Medically tailored meals (MTM) post-discharge
+- WIC for pregnant women
+
+Housing Instability:
+- Housing authority referrals
+- Rent assistance programs
+- Homeless services coordination
+- Transitional housing
+- Legal aid for eviction defense
+
+Transportation:
+- Non-emergency medical transportation (NEMT)
+- Uber Health / Lyft vouchers ($25-50 per ride)
+- Public transit passes
+- Volunteer driver programs
+- Telehealth as alternative
+
+Utility Assistance:
+- LIHEAP (Low Income Home Energy Assistance Program)
+- Utility company payment plans
+- Weatherization assistance
+- Emergency utility assistance funds
+
+Interpersonal Safety:
+- Domestic violence hotline
+- Safe shelter referrals
+- Legal advocacy services
+- Safety planning
+
+==================================================
+COMMUNITY PARTNERSHIPS
+==================================================
+
+Essential Partners:
+- United Way 211 (centralized social services referral)
+- Area Agencies on Aging (AAA)
+- Community Health Centers (FQHCs)
+- Food banks (Feeding America network)
+- Public housing authorities
+- Legal aid organizations
+- Domestic violence shelters
+
+Partnership Models:
+1. Referral Only: Provide list of resources, member self-navigates
+2. Assisted Referral: Staff makes call, schedules appointment
+3. Warm Hand-Off: Direct connection, staff stays on call
+4. Embedded Services: Community partners on-site at health center
+5. Integrated Care: Social workers employed by health plan
+
+==================================================
+DOCUMENTATION REQUIREMENTS
+==================================================
+
+For Star Ratings Credit:
+- Screen at least once per year
+- Use validated tool (PRAPARE, AHC-HRSN, or CMS tool)
+- Document results in structured format
+- For positive screens: Document intervention offered
+- Report aggregated results to CMS
+
+Required Data Fields:
+- Date of screening
+- Tool used
+- Results by domain (positive/negative)
+- Intervention plan (if positive)
+- Referral made (yes/no)
+- Member accepted referral (yes/no)
+- Follow-up date scheduled
+
+==================================================
+STAR RATINGS MEASURE SPECIFICATIONS
+==================================================
+
+Numerator: Members screened for social needs
+Denominator: All active members
+Target: >80% of members screened annually
+Star Threshold: 4 stars = 85%+, 5 stars = 90%+
+
+Exclusions: Members termed <6 months
+
+Additional Credit:
+- Screen-positive rate documentation
+- Intervention completion rate
+- Need resolution rate
+
+==================================================
+WORKFLOW EXAMPLE: POST-DISCHARGE CALL
+==================================================
+
+Scenario: Member discharged from hospital for heart failure
+
+Call Script:
+1. "We want to make sure you have everything you need at home. I'm going to ask a few questions about any challenges you might be facing."
+
+2. Food: "Do you have enough healthy food at home?"
+   - If NO: "We can connect you with a program that delivers meals. Would you like that?"
+
+3. Housing: "Is your housing situation stable? Do you have concerns about losing your home?"
+   - If YES concerned: "Let me connect you with a housing counselor who can help."
+
+4. Transportation: "Do you have a way to get to your follow-up doctor appointment next week?"
+   - If NO: "We can arrange a free ride for you. What day works best?"
+
+5. Medications: "Were you able to pick up your new heart medications?"
+   - If NO: "Let's figure out what's preventing that. Is it cost, transportation, or something else?"
+
+6. Safety: "Do you feel safe where you're living?"
+   - If NO: Offer resources based on concern
+
+Document all responses, make referrals, schedule follow-ups.
+
+==================================================
+COMMON CHALLENGES AND SOLUTIONS
+==================================================
+
+Challenge: Members reluctant to disclose needs
+Solution: 
+- Frame as "routine questions we ask everyone"
+- Explain confidentiality
+- Use non-judgmental language
+- Ask permission: "Is it okay if I ask about..."
+
+Challenge: No community resources available
+Solution:
+- Build resource directory in advance
+- Partner with multiple organizations per domain
+- Offer plan-funded alternatives (Uber vouchers, meals)
+- Advocate for new resources (present data to county)
+
+Challenge: Members don't follow through on referrals
+Solution:
+- Warm hand-offs, not cold referrals
+- Simplify process (one-stop shop)
+- Provide incentives ($25 gift card for completing connection)
+- Assign navigator to accompany member
+
+Challenge: Resource capacity maxed out
+Solution:
+- Develop tiering system (most urgent first)
+- Fund expansion of high-demand services
+- Create alternatives (telehealth vs transportation)
+
+==================================================
+MEASURING SUCCESS
+==================================================
+
+Process Metrics:
+- % members screened
+- % screen-positive
+- % positive screens receiving intervention
+- % referrals completed
+
+Outcome Metrics:
+- % needs resolved within 90 days
+- Reduction in ER visits for screen-positive members
+- Improvement in quality measure compliance
+- Member satisfaction scores
+
+Financial Metrics:
+- Cost per screening: $15-30
+- Cost per intervention: $50-500
+- Avoided medical costs: $500-$3,000 per resolved need
+- ROI: 300-600%
+
+==================================================
+BEST PRACTICES
+==================================================
+
+✅ Universal Screening (not targeted)
+✅ Use validated tools
+✅ Train staff on trauma-informed care
+✅ Offer in member's preferred language
+✅ Make warm referrals, not handouts
+✅ Follow up to confirm connection
+✅ Track outcomes, not just process
+✅ Partner with trusted community organizations
+✅ Integrate with quality improvement programs
+✅ Report results to leadership monthly
+
+==================================================
+SAMPLE METRICS DASHBOARD
+==================================================
+
+Monthly Social Needs Screening Report
+Month: September 2025
+
+Screenings Completed: 2,847 (28% of active members)
+Screen-Positive Rate: 32% (913 members)
+
+Breakdown of Positive Screens:
+- Food insecurity: 245 (27%)
+- Housing instability: 137 (15%)
+- Transportation barriers: 389 (43%)
+- Utility assistance: 156 (17%)
+- Safety concerns: 68 (7%)
+
+Interventions:
+- Referrals made: 913 (100%)
+- Referrals accepted: 731 (80%)
+- Connections completed: 548 (60%)
+- Needs resolved: 312 (34%)
+
+Impact:
+- Average time to resolution: 45 days
+- Members with improved quality compliance: 127 (23%)
+- Avoided ER visits (estimated): 89
+- Cost savings (estimated): $178,000
+
+Next Actions:
+- Increase screening rate (goal: 80% by year-end)
+- Improve connection completion (goal: 70%)
+- Add food pantry partnership (address capacity gap)
+
+==================================================
+KEY TAKEAWAYS
+==================================================
+
+Social needs screening is now a CMS requirement and Star Ratings measure. Successful programs:
+
+✅ Screen universally and systematically
+✅ Use validated tools
+✅ Make warm referrals to trusted partners
+✅ Track outcomes, not just process
+✅ Integrate with quality improvement
+✅ Report results and continuously improve
+
+Addressing social needs improves health outcomes, quality measures, and reduces costs. It's both the right thing to do and good business.
+
