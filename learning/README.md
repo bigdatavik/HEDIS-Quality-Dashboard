@@ -48,11 +48,22 @@
    - Value realization timelines
 
 6. **[Payer Industry Context](./06_payer_industry_context.md)**
-   - Medicare Advantage landscape
-   - Quality Bonus Payment (QBP) program
-   - Competitive dynamics and market trends
-   - Regulatory requirements (CMS, NCQA)
-   - Industry benchmarks and best practices
+   - Medicare Advantage market overview
+   - Top payers and competitive landscape
+   - Regulatory environment and CMS oversight
+   - Industry trends (VBC, AI, SDOH, vertical integration)
+   - Quality benchmarks and best practices
+
+### Technical Implementation
+
+7. **[Notebook Pipeline Guide](./07_notebook_pipeline_guide.md)**
+   - Complete explanation of all 9 notebooks
+   - Medallion Architecture (Bronze → Silver → Gold)
+   - Execution order and dependencies
+   - Table inventory (50+ tables)
+   - UC Functions reference (12 functions)
+   - Runtime and troubleshooting
+   - Use cases by notebook
 
 ---
 
@@ -98,6 +109,7 @@
 ### For Developers
 - Start with **Star Ratings Explained** to understand the business context
 - Review **HEDIS Measures Overview** to understand the data
+- Study **Notebook Pipeline Guide** to understand the data architecture
 - Explore **Project Enhancement Options** for implementation ideas
 
 ### For Business Stakeholders
