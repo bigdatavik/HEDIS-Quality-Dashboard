@@ -79,17 +79,24 @@ print(f"📤 Uploading knowledge documents to: {volume_path}\n")
 # Upload each file
 for filename in knowledge_files:
     try:
-        # Read file content from bundle workspace location
+        # Source path in bundle
         source_path = f"{data_path}/{filename}"
-        content = dbutils.fs.head(source_path, maxBytes=10000000)  # 10MB max
-        
-        # Write to volume
         target_path = f"{volume_path}/{filename}"
-        dbutils.fs.put(target_path, content, overwrite=True)
         
-        print(f"✅ Uploaded: {filename}")
+        # Method 1: Try direct copy first (most reliable)
+        try:
+            dbutils.fs.cp(source_path, target_path, recurse=False)
+            print(f"✅ Uploaded (copy): {filename}")
+        except Exception as copy_error:
+            # Method 2: Fallback to read/write if copy fails
+            print(f"   Copy failed for {filename}, trying read/write...")
+            content = dbutils.fs.head(source_path, maxBytes=10000000)  # 10MB max
+            dbutils.fs.put(target_path, content, overwrite=True)
+            print(f"✅ Uploaded (read/write): {filename}")
+            
     except Exception as e:
         print(f"❌ Error uploading {filename}: {e}")
+        print(f"   Source path attempted: {source_path}")
 
 print("\n✅ Knowledge documents upload complete!")
 
