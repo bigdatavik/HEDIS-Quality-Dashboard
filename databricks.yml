@@ -53,6 +53,46 @@ resources:
             source: WORKSPACE
       max_concurrent_runs: 1
 
+    sdoh_integration_job:
+      name: "[HEDIS Quality] 06 - SDOH Integration"
+      tasks:
+        - task_key: integrate_sdoh_data
+          existing_cluster_id: "0304-162117-qgsi1x04"
+          notebook_task:
+            notebook_path: ./notebooks/06_integrate_sdoh_data.py
+            source: WORKSPACE
+      max_concurrent_runs: 1
+
+    claims_cost_analysis_job:
+      name: "[HEDIS Quality] 07 - Claims Cost Analysis"
+      tasks:
+        - task_key: analyze_claims_costs
+          existing_cluster_id: "0304-162117-qgsi1x04"
+          notebook_task:
+            notebook_path: ./notebooks/07_claims_cost_analysis.py
+            source: WORKSPACE
+      max_concurrent_runs: 1
+
+    geospatial_enrichment_job:
+      name: "[HEDIS Quality] 08 - Geospatial Enrichment"
+      tasks:
+        - task_key: enrich_geospatial
+          existing_cluster_id: "0304-162117-qgsi1x04"
+          notebook_task:
+            notebook_path: ./notebooks/08_geospatial_enrichment.py
+            source: WORKSPACE
+      max_concurrent_runs: 1
+
+    roi_uc_functions_job:
+      name: "[HEDIS Quality] 09 - ROI UC Functions"
+      tasks:
+        - task_key: create_roi_functions
+          existing_cluster_id: "0304-162117-qgsi1x04"
+          notebook_task:
+            notebook_path: ./notebooks/09_create_roi_uc_functions.py
+            source: WORKSPACE
+      max_concurrent_runs: 1
+
   apps:
     hedis_quality_dashboard_app:
       name: 'hedis-dashboard-vik'
