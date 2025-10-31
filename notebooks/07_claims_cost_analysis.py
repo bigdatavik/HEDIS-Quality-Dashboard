@@ -64,7 +64,7 @@ members_df = spark.sql(f"""
         
         -- SDOH if available
         COALESCE(ms.sdoh_risk_classification, 'Unknown') AS sdoh_risk,
-        COALESCE(ms.composite_risk_score, 50) AS sdoh_risk_score,
+        COALESCE(ms.sdoh_risk_score, 50) AS sdoh_risk_score,
         COALESCE(ms.vulnerability_level, 'Unknown') AS vulnerability_level
         
     FROM {CATALOG}.{SILVER_SCHEMA}.members m
